@@ -5,12 +5,9 @@ import type { CalculatorMeta } from "@/lib/calculators";
 export function HowToUse({
   meta,
   title = "How to use this calculator",
-  tip,
 }: {
   meta: Pick<CalculatorMeta, "steps" | "needs">;
   title?: string;
-  /** Replaces the default "don't know a number?" hint. */
-  tip?: string;
 }) {
   return (
     <details open className="group rounded-card border border-brand/30 bg-brand-soft/40 p-4 sm:p-5">
@@ -48,12 +45,8 @@ export function HowToUse({
             ))}
           </ul>
           <p className="text-ink-muted">
-            {tip ?? (
-              <>
-                Don&apos;t know a number? Leave the example value in, or tap the{" "}
-                <span aria-label="info">ⓘ</span> next to it.
-              </>
-            )}{" "}
+            Don&apos;t know a number? Leave the example value in, or tap the{" "}
+            <span aria-label="info">ⓘ</span> next to it.{" "}
             <Link
               href="/guide/"
               className="font-semibold text-brand underline-offset-2 hover:underline"

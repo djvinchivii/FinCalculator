@@ -20,12 +20,6 @@ export function SiteHeader() {
         </Link>
         <nav aria-label="Main" className="flex items-center gap-1 sm:gap-3">
           <Link
-            href="/budget-planner/"
-            className="rounded-md px-2 py-1 text-sm font-semibold text-brand hover:text-brand-strong"
-          >
-            Budget
-          </Link>
-          <Link
             href="/guide/"
             className="rounded-md px-2 py-1 text-sm font-medium text-ink-muted hover:text-ink"
           >
@@ -33,7 +27,7 @@ export function SiteHeader() {
           </Link>
           <Link
             href="/#calculators"
-            className="hidden rounded-md px-2 py-1 text-sm font-medium text-ink-muted hover:text-ink sm:inline"
+            className="rounded-md px-2 py-1 text-sm font-medium text-ink-muted hover:text-ink"
           >
             Calculators
           </Link>
