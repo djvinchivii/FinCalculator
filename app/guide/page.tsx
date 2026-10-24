@@ -46,6 +46,7 @@ const TYPICAL_RATES: { what: string; rate: string; note: string }[] = [
 
 const SECTIONS = [
   { id: "how-it-works", title: "How the calculators work" },
+  { id: "planner", title: "Tracking your money" },
   { id: "which-calculator", title: "Which calculator should I use?" },
   { id: "rates", title: "Understanding interest rates" },
   { id: "glossary", title: "Money words, explained" },
@@ -129,6 +130,21 @@ export default function GuidePage() {
         <p className="rounded-lg bg-surface-2 p-4 text-sm">
           <strong className="text-ink">Remember:</strong> these are estimates to help you learn and
           plan, not financial advice. Real rates, taxes and fees vary.
+        </p>
+      </SectionCard>
+
+      <SectionCard id="planner" title="Want to track your money month to month?">
+        <p>
+          The calculators answer one question at a time. The{" "}
+          <Link
+            href="/budget-planner/"
+            className="font-semibold text-brand underline-offset-2 hover:underline"
+          >
+            Budget Planner
+          </Link>{" "}
+          is for everyday money management: plan your income and spending, log what you spend, keep
+          track of bills, and save toward goals. It&apos;s a great next step after the Budget &amp;
+          Emergency Fund calculator.
         </p>
       </SectionCard>
 

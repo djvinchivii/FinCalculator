@@ -2,14 +2,27 @@
 
 A fast, mobile-first suite of accurate financial calculators — from a first budget to early retirement. Every calculator updates live as you type, explains its result in plain English, draws a chart, shows a full schedule where relevant, and can be shared by URL or exported to CSV.
 
-No accounts, no backend, no tracking: it's a static site and all math runs in the browser.
+No accounts, no backend, no tracking: it's a static site and everything runs in the browser.
 
-| Level            | Calculators                                                                    |
-| ---------------- | ------------------------------------------------------------------------------ |
-| Basics           | Simple Interest · Inflation · Budget & Emergency Fund · APR ↔ APY & Rule of 72 |
-| Building Wealth  | Compound Interest · Savings Goal · Investment Return (CAGR)                    |
-| Debt & Borrowing | Loan & Amortization · Mortgage · Debt Payoff (Avalanche vs. Snowball)          |
-| Long Game        | Retirement & FIRE                                                              |
+| Level            | Calculators                                                                                              |
+| ---------------- | -------------------------------------------------------------------------------------------------------- |
+| Basics           | Budget & Emergency Fund · Simple Interest · Inflation · Interest Rates Explained (APR ↔ APY, Rule of 72) |
+| Building Wealth  | Compound Interest · Savings Goal · Investment Return (CAGR)                                              |
+| Debt & Borrowing | Loan Payment · Mortgage · Debt Payoff Plan (Avalanche vs. Snowball)                                      |
+| Long Game        | Retirement (with FIRE number)                                                                            |
+
+Built for people learning financial literacy: every calculator opens with the plain question it answers, a 3-step "how to use" box, plain-English tooltips and hints on where to find each number.
+
+**Beginner's Guide** (`/guide/`): how the calculators work, which one to use, what interest rates mean (with typical ranges), and a plain-English glossary (shared with the tooltips via `lib/glossary.ts`).
+
+**Budget Planner** (`/budget-planner/`) for month-to-month money management:
+
+- **Quick setup** from your take-home pay, with a balanced 50/30/20 starter plan (or sample data to explore)
+- **Plan:** income in any pay schedule, plus categories grouped into Needs / Wants / Savings & debt, with a live "left to budget" total (zero-based budgeting)
+- **Transactions:** add, edit, filter and search spending and income; export a month or everything to CSV
+- **Overview:** spent vs. planned per category, over-budget warnings, "safe to spend per day", your split vs. 50/30/20, and plain-English tips
+- **Bills** with due dates and paid/overdue status, and **savings goals** with projected finish dates
+- **Private by design:** saved only in the browser (`localStorage`), with backup, restore and delete-all. Logic lives in `lib/budget/` (pure, unit-tested); UI in `components/budget/`.
 
 ## Quick start
 
@@ -43,7 +56,7 @@ The first time you run the e2e tests, install a browser: `npx playwright install
 - **Recharts** for charts, loaded lazily when a chart scrolls into view.
 
 ```
-app/                         routes: hub page, /guide and /calculators/[slug]
+app/                         routes: hub, /guide, /budget-planner and /calculators/[slug]
 components/
   ui/                        Input, Select, Toggle, Slider, Card, Tabs, Tooltip, form-bound fields
   calculator/                CalculatorShell, panels, ResultSummary, ScheduleTable, Share/Copy/Export, Explainer, useCalculator

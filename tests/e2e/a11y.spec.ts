@@ -4,6 +4,7 @@ import { expect, test } from "@playwright/test";
 const PAGES = [
   "/",
   "/guide/",
+  "/budget-planner/",
   "/calculators/compound-interest/",
   "/calculators/simple-interest/",
   "/calculators/loan/",
@@ -43,3 +44,28 @@ for (const scheme of ["light", "dark"] as const) {
     }
   });
 }
+
+test.describe("accessibility (budget planner with data)", () => {
+  for (const scheme of ["light", "dark"] as const) {
+    test(`all planner tabs have no WCAG A/AA violations (${scheme})`, async ({ page }) => {
+      await page.emulateMedia({ colorScheme: scheme });
+      await page.goto("/budget-planner/");
+      await page.getByRole("button", { name: "Try it with sample data" }).click();
+      for (const tab of ["Overview", "Plan", "Transactions", "Bills", "Goals"]) {
+        await page.getByRole("tab", { name: tab }).click();
+        await page.waitForTimeout(300);
+        const results = await new AxeBuilder({ page })
+          .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
+          .analyze();
+        const summary = results.violations.map(
+          (v) =>
+            `${tab} ${v.id}: ${v.nodes
+              .map((n) => n.target.join(" "))
+              .slice(0, 3)
+              .join(", ")}`,
+        );
+        expect(summary).toEqual([]);
+      }
+    });
+  }
+});

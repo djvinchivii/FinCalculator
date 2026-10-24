@@ -2,12 +2,21 @@ import Link from "next/link";
 import type { CalculatorMeta } from "@/lib/calculators";
 
 /** Beginner-friendly quick start: three steps, what to have handy, and a link to the guide. */
-export function HowToUse({ meta }: { meta: CalculatorMeta }) {
+export function HowToUse({
+  meta,
+  title = "How to use this calculator",
+  tip,
+}: {
+  meta: Pick<CalculatorMeta, "steps" | "needs">;
+  title?: string;
+  /** Replaces the default "don't know a number?" hint. */
+  tip?: string;
+}) {
   return (
     <details open className="group rounded-card border border-brand/30 bg-brand-soft/40 p-4 sm:p-5">
       <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-md font-semibold text-ink [&::-webkit-details-marker]:hidden">
         <span className="flex items-center gap-2">
-          <span aria-hidden="true">💡</span> How to use this calculator
+          <span aria-hidden="true">💡</span> {title}
         </span>
         <span className="text-sm font-medium text-ink-muted">
           <span className="group-open:hidden">Show</span>
@@ -39,8 +48,12 @@ export function HowToUse({ meta }: { meta: CalculatorMeta }) {
             ))}
           </ul>
           <p className="text-ink-muted">
-            Don&apos;t know a number? Leave the example value in, or tap the{" "}
-            <span aria-label="info">ⓘ</span> next to it.{" "}
+            {tip ?? (
+              <>
+                Don&apos;t know a number? Leave the example value in, or tap the{" "}
+                <span aria-label="info">ⓘ</span> next to it.
+              </>
+            )}{" "}
             <Link
               href="/guide/"
               className="font-semibold text-brand underline-offset-2 hover:underline"

@@ -37,7 +37,7 @@ export function Tabs({
     <div
       role="tablist"
       aria-label={label}
-      className="flex gap-1 rounded-lg border border-border bg-surface-2 p-1"
+      className="flex gap-1 overflow-x-auto rounded-lg border border-border bg-surface-2 p-1"
     >
       {options.map((o, i) => {
         const selected = o.value === value;
@@ -55,7 +55,7 @@ export function Tabs({
             tabIndex={selected ? 0 : -1}
             onClick={() => onChange(o.value)}
             onKeyDown={(e) => onKeyDown(e, i)}
-            className={`min-h-[40px] flex-1 rounded-md px-3 py-1.5 text-sm font-semibold transition ${
+            className={`min-h-[40px] flex-1 whitespace-nowrap rounded-md px-2.5 py-1.5 text-sm font-semibold transition sm:px-3 ${
               selected ? "bg-surface text-ink shadow-sm" : "text-ink-muted hover:text-ink"
             }`}
           >

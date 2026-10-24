@@ -29,6 +29,30 @@ export default function HubPage() {
         </div>
       </section>
 
+      <Link
+        href="/budget-planner/"
+        className="group flex flex-col gap-4 rounded-card border-2 border-brand/40 bg-brand-soft/40 p-5 shadow-card transition hover:border-brand sm:flex-row sm:items-center sm:p-6"
+      >
+        <span aria-hidden="true" className="text-4xl">
+          🗂️
+        </span>
+        <span className="flex-1">
+          <span className="block text-xs font-semibold uppercase tracking-wider text-brand-strong dark:text-brand">
+            Budget Planner
+          </span>
+          <span className="mt-1 block text-xl font-bold group-hover:text-brand">
+            Where is my money going each month?
+          </span>
+          <span className="mt-1 block text-ink-muted">
+            Plan your income and spending, log what you spend, track bills and savings goals — all
+            saved privately in your browser.
+          </span>
+        </span>
+        <span className="text-sm font-semibold text-brand" aria-hidden="true">
+          Open the planner →
+        </span>
+      </Link>
+
       <div id="calculators" className="scroll-mt-20 space-y-10">
         {GROUPS.map((group, gi) => (
           <section key={group.id} aria-labelledby={`group-${group.id}`} className="space-y-4">
