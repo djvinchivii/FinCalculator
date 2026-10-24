@@ -31,7 +31,7 @@ function isStringRecord(value: unknown): value is UrlRecord {
 }
 
 export function parseState<T extends object>(params: URLSearchParams, defaults: T): T {
-  const out: Record<string, unknown> = { ...defaults };
+  const out: Record<string, unknown> = { ...(defaults as Record<string, unknown>) };
   for (const [key, fallback] of Object.entries(defaults)) {
     const raw = params.get(key);
     if (raw === null) continue;

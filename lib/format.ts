@@ -90,11 +90,12 @@ export function formatDuration(months: number): string {
   return `${plural(years, "year")}, ${plural(rem, "month")}`;
 }
 
-/** Years with up to 2 decimals: "9.01 years". */
+/** Years with a fixed number of decimals: "9.00 years", "9.006 years". */
 export function formatYears(years: number, digits = 2): string {
   const v = clean(years);
   if (v === null) return PLACEHOLDER;
-  return `${formatNumber(v, digits)} ${Math.abs(v) === 1 ? "year" : "years"}`;
+  const text = new Intl.NumberFormat(LOCALE, { minimumFractionDigits: digits, maximumFractionDigits: digits }).format(v);
+  return `${text} ${v === 1 ? "year" : "years"}`;
 }
 
 /** ISO "2055-02-01" → "Feb 2055". */

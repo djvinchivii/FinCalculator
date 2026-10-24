@@ -51,3 +51,8 @@ export function monthsBetween(a: Date, b: Date): number {
   if (b.getUTCDate() < a.getUTCDate()) months -= 1;
   return months;
 }
+
+/** First day of next month (a typical first-payment date for a new loan). */
+export function firstOfNextMonthISO(from: Date = new Date()): string {
+  return toISODate(new Date(Date.UTC(from.getFullYear(), from.getMonth() + 1, 1)));
+}
