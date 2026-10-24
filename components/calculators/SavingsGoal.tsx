@@ -13,15 +13,34 @@ import {
   type SolveContributionResult,
   type SolveTimeResult,
 } from "@/lib/finance";
-import { compounding, frequency, money, numberText, percent, timing, toOptions } from "@/lib/schema";
+import {
+  compounding,
+  frequency,
+  money,
+  numberText,
+  percent,
+  timing,
+  toOptions,
+} from "@/lib/schema";
 import { formatCurrency, formatDuration, formatMonthYear } from "@/lib/format";
 import { perPeriod, periodNoun, pctPhrase } from "@/lib/text";
 import { useCalculator } from "@/components/calculator/useCalculator";
 import { CalculatorPanels, InputGroup } from "@/components/calculator/CalculatorPanels";
 import { Alert, ResultSummary } from "@/components/calculator/ResultSummary";
 import { ScheduleTable } from "@/components/calculator/ScheduleTable";
-import { CopyResultsButton, ExportButton, ShareButton } from "@/components/calculator/ActionButtons";
-import { DateField, MoneyField, NumberField, PercentField, SelectField, ToggleField } from "@/components/ui/FormFields";
+import {
+  CopyResultsButton,
+  ExportButton,
+  ShareButton,
+} from "@/components/calculator/ActionButtons";
+import {
+  DateField,
+  MoneyField,
+  NumberField,
+  PercentField,
+  SelectField,
+  ToggleField,
+} from "@/components/ui/FormFields";
 import { Tabs } from "@/components/ui/Tabs";
 import { GrowthChart } from "@/components/charts";
 import { localTodayISO } from "./loan-shared";
@@ -36,21 +55,45 @@ const schema = z
     contributionFrequency: frequency(),
     timing: timing(),
     deadlineMode: z.enum(["years", "date"]),
-    years: numberText({ optional: true, min: 0, max: 100, maxMessage: "Deadlines are capped at 100 years" }),
+    years: numberText({
+      optional: true,
+      min: 0,
+      max: 100,
+      maxMessage: "Deadlines are capped at 100 years",
+    }),
     deadline: z.string(),
     contribution: money({ optional: true }),
   })
   .superRefine((v, ctx) => {
     if (v.mode === "contribution") {
       if (v.deadlineMode === "years" && v.years <= 0) {
-        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["years"], message: "Enter how many years you have" });
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["years"],
+          message: "Enter how many years you have",
+        });
       }
       if (v.deadlineMode === "date") {
         const d = parseISODate(v.deadline);
         const today = parseISODate(localTodayISO());
-        if (!d || !today) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["deadline"], message: "Pick a deadline date" });
-        else if (monthsBetween(today, d) < 1) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["deadline"], message: "Pick a date at least a month away" });
-        else if (monthsBetween(today, d) > 1200) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["deadline"], message: "Deadlines are capped at 100 years" });
+        if (!d || !today)
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ["deadline"],
+            message: "Pick a deadline date",
+          });
+        else if (monthsBetween(today, d) < 1)
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ["deadline"],
+            message: "Pick a date at least a month away",
+          });
+        else if (monthsBetween(today, d) > 1200)
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ["deadline"],
+            message: "Deadlines are capped at 100 years",
+          });
       }
     }
   });
@@ -73,7 +116,12 @@ const defaults: Form = {
 };
 
 type Computed =
-  | { mode: "contribution"; years: number; solved: SolveContributionResult; projection: CompoundResult }
+  | {
+      mode: "contribution";
+      years: number;
+      solved: SolveContributionResult;
+      projection: CompoundResult;
+    }
   | { mode: "time"; solved: SolveTimeResult; projection: CompoundResult | null };
 
 function deadlineYears(v: Inputs): number {
@@ -84,17 +132,40 @@ function deadlineYears(v: Inputs): number {
 }
 
 const compute = (v: Inputs): Computed => {
-  const base = { target: v.target, current: v.current, annualRate: v.annualRate, compounding: v.compounding, contributionFrequency: v.contributionFrequency, timing: v.timing };
+  const base = {
+    target: v.target,
+    current: v.current,
+    annualRate: v.annualRate,
+    compounding: v.compounding,
+    contributionFrequency: v.contributionFrequency,
+    timing: v.timing,
+  };
   if (v.mode === "contribution") {
     const years = deadlineYears(v);
     const solved = solveContribution({ ...base, years });
-    const projection = simulateCompound({ principal: v.current, contribution: solved.contribution, contributionFrequency: v.contributionFrequency, timing: v.timing, annualRate: v.annualRate, compounding: v.compounding, years: solved.periods / v.contributionFrequency });
+    const projection = simulateCompound({
+      principal: v.current,
+      contribution: solved.contribution,
+      contributionFrequency: v.contributionFrequency,
+      timing: v.timing,
+      annualRate: v.annualRate,
+      compounding: v.compounding,
+      years: solved.periods / v.contributionFrequency,
+    });
     return { mode: "contribution", years, solved, projection };
   }
   const solved = solveTime({ ...base, contribution: v.contribution });
   const projection =
     solved.reachable && solved.periodsWhole !== null && solved.periodsWhole > 0
-      ? simulateCompound({ principal: v.current, contribution: v.contribution, contributionFrequency: v.contributionFrequency, timing: v.timing, annualRate: v.annualRate, compounding: v.compounding, years: solved.periodsWhole / v.contributionFrequency })
+      ? simulateCompound({
+          principal: v.current,
+          contribution: v.contribution,
+          contributionFrequency: v.contributionFrequency,
+          timing: v.timing,
+          annualRate: v.annualRate,
+          compounding: v.compounding,
+          years: solved.periodsWhole / v.contributionFrequency,
+        })
       : null;
   return { mode: "time", solved, projection };
 };
@@ -108,11 +179,14 @@ function reachDate(months: number | null): string | null {
 
 function summaryText(v: Inputs, c: Computed): string {
   if (c.mode === "contribution") {
-    if (c.solved.alreadyOnTrack) return `Good news: your ${formatCurrency(v.current, { cents: false })} growing at ${pctPhrase(v.annualRate)} reaches ${formatCurrency(v.target, { cents: false })} on its own — no extra contributions needed.`;
+    if (c.solved.alreadyOnTrack)
+      return `Good news: your ${formatCurrency(v.current, { cents: false })} growing at ${pctPhrase(v.annualRate)} reaches ${formatCurrency(v.target, { cents: false })} on its own — no extra contributions needed.`;
     return `To turn ${formatCurrency(v.current, { cents: false })} into ${formatCurrency(v.target, { cents: false })} in ${formatDuration(c.years * 12)} at ${pctPhrase(v.annualRate)}, save ${formatCurrency(c.solved.contributionRounded)} ${perPeriod(v.contributionFrequency)}. You'll contribute ${formatCurrency(c.solved.totalContributed, { cents: false })} in total and interest covers the other ${formatCurrency(c.solved.interestEarned, { cents: false })}.`;
   }
-  if (!c.solved.reachable || c.solved.months === null) return `With ${formatCurrency(v.contribution)} ${perPeriod(v.contributionFrequency)} and no growth, you'll never reach ${formatCurrency(v.target, { cents: false })}. Add a contribution or an interest rate.`;
-  if (c.solved.months === 0) return `You've already reached your ${formatCurrency(v.target, { cents: false })} goal. 🎉`;
+  if (!c.solved.reachable || c.solved.months === null)
+    return `With ${formatCurrency(v.contribution)} ${perPeriod(v.contributionFrequency)} and no growth, you'll never reach ${formatCurrency(v.target, { cents: false })}. Add a contribution or an interest rate.`;
+  if (c.solved.months === 0)
+    return `You've already reached your ${formatCurrency(v.target, { cents: false })} goal. 🎉`;
   return `Saving ${formatCurrency(v.contribution)} ${perPeriod(v.contributionFrequency)} on top of ${formatCurrency(v.current, { cents: false })} at ${pctPhrase(v.annualRate)}, you'll reach ${formatCurrency(v.target, { cents: false })} in about ${formatDuration(c.solved.months)}.`;
 }
 
@@ -130,7 +204,10 @@ export default function SavingsGoal() {
       headline = formatCurrency(result.solved.contributionRounded);
     } else {
       headlineLabel = "Time to reach your goal";
-      headline = result.solved.reachable && result.solved.months !== null ? formatDuration(result.solved.months) : "Never at this rate";
+      headline =
+        result.solved.reachable && result.solved.months !== null
+          ? formatDuration(result.solved.months)
+          : "Never at this rate";
     }
   }
   const projection = result?.projection ?? null;
@@ -145,16 +222,31 @@ export default function SavingsGoal() {
             label="What do you want to solve for?"
             idPrefix="goal-mode"
             value={mode}
-            onChange={(v) => form.setValue("mode", v as Form["mode"], { shouldValidate: true, shouldDirty: true })}
+            onChange={(v) =>
+              form.setValue("mode", v as Form["mode"], { shouldValidate: true, shouldDirty: true })
+            }
             options={[
               { value: "contribution", label: "How much to save" },
               { value: "time", label: "How long it takes" },
             ]}
           />
-          <div id="goal-mode-panel" role="tabpanel" aria-labelledby={`goal-mode-tab-${mode}`} className="space-y-5">
+          <div
+            id="goal-mode-panel"
+            role="tabpanel"
+            aria-labelledby={`goal-mode-tab-${mode}`}
+            className="space-y-5"
+          >
             <InputGroup title="Goal">
-              <MoneyField name="target" label="Savings goal" tooltip="The amount you want to have saved." />
-              <MoneyField name="current" label="Current savings" tooltip="What you've already set aside for this goal." />
+              <MoneyField
+                name="target"
+                label="Savings goal"
+                tooltip="The amount you want to have saved."
+              />
+              <MoneyField
+                name="current"
+                label="Current savings"
+                tooltip="What you've already set aside for this goal."
+              />
             </InputGroup>
             {mode === "contribution" ? (
               <InputGroup title="Deadline">
@@ -167,20 +259,49 @@ export default function SavingsGoal() {
                   ]}
                 />
                 {deadlineMode === "years" ? (
-                  <NumberField name="years" label="Years to goal" suffix="years" slider={{ min: 1, max: 40 }} tooltip="How long until you need the money." />
+                  <NumberField
+                    name="years"
+                    label="Years to goal"
+                    suffix="years"
+                    slider={{ min: 1, max: 40 }}
+                    tooltip="How long until you need the money."
+                  />
                 ) : (
-                  <DateField name="deadline" label="Goal date" tooltip="The date you need the money by." />
+                  <DateField
+                    name="deadline"
+                    label="Goal date"
+                    tooltip="The date you need the money by."
+                  />
                 )}
               </InputGroup>
             ) : (
               <InputGroup title="Contribution">
-                <MoneyField name="contribution" label={`Contribution each ${periodNoun(freq)}`} tooltip="The fixed amount you'll add every period." />
+                <MoneyField
+                  name="contribution"
+                  label={`Contribution each ${periodNoun(freq)}`}
+                  tooltip="The fixed amount you'll add every period."
+                />
               </InputGroup>
             )}
             <InputGroup title="Growth">
-              <PercentField name="annualRate" label="Annual interest rate" slider={{ min: 0, max: 12, step: 0.1 }} tooltip="The yearly rate your savings earn (e.g. a high-yield savings account's APR)." />
-              <SelectField name="compounding" label="Compounding" options={toOptions(COMPOUNDING_OPTIONS)} tooltip="How often interest is added to your balance." />
-              <SelectField name="contributionFrequency" label="Contribution frequency" options={toOptions(FREQUENCY_OPTIONS)} tooltip="How often you add money." />
+              <PercentField
+                name="annualRate"
+                label="Annual interest rate"
+                slider={{ min: 0, max: 12, step: 0.1 }}
+                tooltip="The yearly rate your savings earn (e.g. a high-yield savings account's APR)."
+              />
+              <SelectField
+                name="compounding"
+                label="Compounding"
+                options={toOptions(COMPOUNDING_OPTIONS)}
+                tooltip="How often interest is added to your balance."
+              />
+              <SelectField
+                name="contributionFrequency"
+                label="Contribution frequency"
+                options={toOptions(FREQUENCY_OPTIONS)}
+                tooltip="How often you add money."
+              />
               <ToggleField
                 name="timing"
                 label="Contribution timing"
@@ -205,26 +326,59 @@ export default function SavingsGoal() {
               stats={
                 result.mode === "contribution"
                   ? [
-                      { label: "Total you contribute", value: formatCurrency(result.solved.totalContributed) },
-                      { label: "Interest earned", value: formatCurrency(result.solved.interestEarned), tone: "good" },
-                      { label: "Number of deposits", value: String(result.solved.alreadyOnTrack ? 0 : result.solved.periods) },
+                      {
+                        label: "Total you contribute",
+                        value: formatCurrency(result.solved.totalContributed),
+                      },
+                      {
+                        label: "Interest earned",
+                        value: formatCurrency(result.solved.interestEarned),
+                        tone: "good",
+                      },
+                      {
+                        label: "Number of deposits",
+                        value: String(result.solved.alreadyOnTrack ? 0 : result.solved.periods),
+                      },
                     ]
                   : result.solved.reachable && result.projection
                     ? [
-                        { label: "Goal reached", value: formatMonthYear(reachDate(result.solved.months)) },
-                        { label: "Total you contribute", value: formatCurrency(result.projection.totalContributed) },
-                        { label: "Interest earned", value: formatCurrency(result.projection.totalInterest), tone: "good" },
+                        {
+                          label: "Goal reached",
+                          value: formatMonthYear(reachDate(result.solved.months)),
+                        },
+                        {
+                          label: "Total you contribute",
+                          value: formatCurrency(result.projection.totalContributed),
+                        },
+                        {
+                          label: "Interest earned",
+                          value: formatCurrency(result.projection.totalInterest),
+                          tone: "good",
+                        },
                       ]
                     : []
               }
               actions={
                 <>
                   <ShareButton getUrl={getShareUrl} />
-                  <CopyResultsButton getText={() => [`Savings goal — ${headlineLabel}: ${headline}`, summaryText(inputs, result), getShareUrl()].join("\n")} />
+                  <CopyResultsButton
+                    getText={() =>
+                      [
+                        `Savings goal — ${headlineLabel}: ${headline}`,
+                        summaryText(inputs, result),
+                        getShareUrl(),
+                      ].join("\n")
+                    }
+                  />
                 </>
               }
             />
-            {result.mode === "time" && !result.solved.reachable && <Alert tone="danger">This goal can’t be reached without contributions or interest. Increase your contribution or rate.</Alert>}
+            {result.mode === "time" && !result.solved.reachable && (
+              <Alert tone="danger">
+                This goal can’t be reached without contributions or interest. Increase your
+                contribution or rate.
+              </Alert>
+            )}
             {projection && projection.years.length > 0 && (
               <>
                 <GrowthChart
@@ -233,7 +387,11 @@ export default function SavingsGoal() {
                   xLabel="Year"
                   data={[
                     { year: 0, contributed: inputs.current, interest: 0 },
-                    ...projection.years.map((y) => ({ year: y.year, contributed: y.totalContributed, interest: y.totalInterest })),
+                    ...projection.years.map((y) => ({
+                      year: y.year,
+                      contributed: y.totalContributed,
+                      interest: y.totalInterest,
+                    })),
                   ]}
                   series={[
                     { key: "contributed", label: "Your deposits", color: "rgb(var(--chart-1))" },
@@ -250,7 +408,11 @@ export default function SavingsGoal() {
                     { header: "Deposits", cell: (r) => formatCurrency(r.contributions) },
                     { header: "Interest", cell: (r) => formatCurrency(r.interest) },
                     { header: "Balance", cell: (r) => formatCurrency(r.balance) },
-                    { header: "% of goal", cell: (r) => `${Math.min(999, Math.round((r.balance / inputs.target) * 100))}%` },
+                    {
+                      header: "% of goal",
+                      cell: (r) =>
+                        `${Math.min(999, Math.round((r.balance / inputs.target) * 100))}%`,
+                    },
                   ]}
                   actions={
                     <ExportButton

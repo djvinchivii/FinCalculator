@@ -9,7 +9,11 @@ import { useCalculator } from "@/components/calculator/useCalculator";
 import { CalculatorPanels, InputGroup } from "@/components/calculator/CalculatorPanels";
 import { Alert, ResultSummary } from "@/components/calculator/ResultSummary";
 import { ScheduleTable } from "@/components/calculator/ScheduleTable";
-import { CopyResultsButton, ExportButton, ShareButton } from "@/components/calculator/ActionButtons";
+import {
+  CopyResultsButton,
+  ExportButton,
+  ShareButton,
+} from "@/components/calculator/ActionButtons";
 import { FieldChrome } from "@/components/ui/Field";
 import { MoneyField, NumberField, ToggleField } from "@/components/ui/FormFields";
 import { GrowthChart } from "@/components/charts";
@@ -33,24 +37,44 @@ const schema = z
       .map((s) => parseNumber(s));
     if (v.mode === "series") {
       if (list.some((n) => n === null || n < 0)) {
-        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["values"], message: "Use positive numbers separated by commas or new lines" });
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["values"],
+          message: "Use positive numbers separated by commas or new lines",
+        });
         return z.NEVER;
       }
       if (list.length < 2 || list.length > MAX_VALUES) {
-        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["values"], message: `Enter between 2 and ${MAX_VALUES} yearly values` });
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["values"],
+          message: `Enter between 2 and ${MAX_VALUES} yearly values`,
+        });
         return z.NEVER;
       }
       if ((list[0] ?? 0) <= 0) {
-        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["values"], message: "The first value must be above $0" });
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["values"],
+          message: "The first value must be above $0",
+        });
         return z.NEVER;
       }
     } else {
       if (v.start <= 0) {
-        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["start"], message: "Enter a starting value above $0" });
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["start"],
+          message: "Enter a starting value above $0",
+        });
         return z.NEVER;
       }
       if (v.years <= 0) {
-        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["years"], message: "Enter a number of years above 0" });
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["years"],
+          message: "Enter a number of years above 0",
+        });
         return z.NEVER;
       }
     }
@@ -79,9 +103,21 @@ interface Computed {
 const compute = (v: Inputs): Computed => {
   if (v.mode === "series") {
     const series = cagrSeries(v.list);
-    return { rate: series.cagr, start: v.list[0] ?? 0, end: v.list[v.list.length - 1] ?? 0, years: v.list.length - 1, series };
+    return {
+      rate: series.cagr,
+      start: v.list[0] ?? 0,
+      end: v.list[v.list.length - 1] ?? 0,
+      years: v.list.length - 1,
+      series,
+    };
   }
-  return { rate: cagr(v.start, v.end, v.years), start: v.start, end: v.end, years: v.years, series: null };
+  return {
+    rate: cagr(v.start, v.end, v.years),
+    start: v.start,
+    end: v.end,
+    years: v.years,
+    series: null,
+  };
 };
 
 function summaryText(r: Computed): string {
@@ -136,9 +172,22 @@ export default function Cagr() {
           />
           {mode === "simple" ? (
             <InputGroup>
-              <MoneyField name="start" label="Starting value" tooltip="What the investment was worth at the beginning." />
-              <MoneyField name="end" label="Ending value" tooltip="What it's worth now (or at the end of the period)." />
-              <NumberField name="years" label="Years" suffix="years" tooltip="How long you held it. Fractions like 2.5 are fine." />
+              <MoneyField
+                name="start"
+                label="Starting value"
+                tooltip="What the investment was worth at the beginning."
+              />
+              <MoneyField
+                name="end"
+                label="Ending value"
+                tooltip="What it's worth now (or at the end of the period)."
+              />
+              <NumberField
+                name="years"
+                label="Years"
+                suffix="years"
+                tooltip="How long you held it. Fractions like 2.5 are fine."
+              />
             </InputGroup>
           ) : (
             <ValuesField />
@@ -154,24 +203,51 @@ export default function Cagr() {
               headline={result.rate === null ? "—" : formatPercent(result.rate)}
               summary={summaryText(result)}
               stats={[
-                { label: "Total growth", value: result.start > 0 ? formatPercent(result.end / result.start - 1) : "—", tone: result.end >= result.start ? "good" : "bad" },
-                { label: "Growth multiple", value: result.start > 0 ? `${(result.end / result.start).toFixed(2)}×` : "—" },
+                {
+                  label: "Total growth",
+                  value: result.start > 0 ? formatPercent(result.end / result.start - 1) : "—",
+                  tone: result.end >= result.start ? "good" : "bad",
+                },
+                {
+                  label: "Growth multiple",
+                  value: result.start > 0 ? `${(result.end / result.start).toFixed(2)}×` : "—",
+                },
                 ...(s && s.volatility !== null
                   ? [
                       { label: "Volatility (std. dev.)", value: formatPercent(s.volatility) },
-                      { label: "Best year", value: formatPercent(s.bestYear ?? NaN), tone: "good" as const },
-                      { label: "Worst year", value: formatPercent(s.worstYear ?? NaN), tone: "bad" as const },
+                      {
+                        label: "Best year",
+                        value: formatPercent(s.bestYear ?? NaN),
+                        tone: "good" as const,
+                      },
+                      {
+                        label: "Worst year",
+                        value: formatPercent(s.worstYear ?? NaN),
+                        tone: "bad" as const,
+                      },
                     ]
                   : []),
               ]}
               actions={
                 <>
                   <ShareButton getUrl={getShareUrl} />
-                  <CopyResultsButton getText={() => [`CAGR: ${result.rate === null ? "—" : formatPercent(result.rate)}`, summaryText(result), getShareUrl()].join("\n")} />
+                  <CopyResultsButton
+                    getText={() =>
+                      [
+                        `CAGR: ${result.rate === null ? "—" : formatPercent(result.rate)}`,
+                        summaryText(result),
+                        getShareUrl(),
+                      ].join("\n")
+                    }
+                  />
                 </>
               }
             />
-            {result.end === 0 && <Alert tone="info">An ending value of $0 means a −100% CAGR: the investment was wiped out.</Alert>}
+            {result.end === 0 && (
+              <Alert tone="info">
+                An ending value of $0 means a −100% CAGR: the investment was wiped out.
+              </Alert>
+            )}
             {s && (
               <>
                 <GrowthChart
@@ -182,7 +258,12 @@ export default function Cagr() {
                   data={s.points.map((p) => ({ year: p.year, actual: p.actual, smooth: p.smooth }))}
                   series={[
                     { key: "actual", label: "Actual value", color: "rgb(var(--chart-1))" },
-                    { key: "smooth", label: `Smooth ${result.rate === null ? "" : formatPercent(result.rate)} CAGR`, color: "rgb(var(--chart-2))", dashed: true },
+                    {
+                      key: "smooth",
+                      label: `Smooth ${result.rate === null ? "" : formatPercent(result.rate)} CAGR`,
+                      color: "rgb(var(--chart-2))",
+                      dashed: true,
+                    },
                   ]}
                 />
                 <ScheduleTable
@@ -193,7 +274,10 @@ export default function Cagr() {
                   columns={[
                     { header: "Year", cell: (p) => p.year, align: "left" },
                     { header: "Value", cell: (p) => formatCurrency(p.actual ?? NaN) },
-                    { header: "Return that year", cell: (p) => (p.yearReturn === null ? "—" : formatPercent(p.yearReturn)) },
+                    {
+                      header: "Return that year",
+                      cell: (p) => (p.yearReturn === null ? "—" : formatPercent(p.yearReturn)),
+                    },
                     { header: "CAGR line", cell: (p) => formatCurrency(p.smooth) },
                   ]}
                   actions={
@@ -203,7 +287,10 @@ export default function Cagr() {
                       columns={[
                         { header: "Year", value: (p) => p.year },
                         { header: "Value", value: (p) => p.actual },
-                        { header: "Return (%)", value: (p) => (p.yearReturn === null ? null : p.yearReturn * 100) },
+                        {
+                          header: "Return (%)",
+                          value: (p) => (p.yearReturn === null ? null : p.yearReturn * 100),
+                        },
                         { header: "CAGR line", value: (p) => p.smooth },
                       ]}
                     />

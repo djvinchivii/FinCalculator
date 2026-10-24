@@ -43,7 +43,11 @@ export function CalculatorPanels<TForm extends FieldValues, TOut>({
 export function InputGroup({ title, children }: { title?: string; children: ReactNode }) {
   return (
     <fieldset className="space-y-4 border-t border-border pt-4 first:border-t-0 first:pt-0">
-      {title && <legend className="float-left mb-3 w-full text-xs font-semibold uppercase tracking-wider text-ink-muted">{title}</legend>}
+      {title && (
+        <legend className="float-left mb-3 w-full text-xs font-semibold uppercase tracking-wider text-ink-muted">
+          {title}
+        </legend>
+      )}
       <div className="clear-both space-y-4">{children}</div>
     </fieldset>
   );

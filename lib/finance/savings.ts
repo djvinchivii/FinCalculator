@@ -87,7 +87,13 @@ export function solveTime(input: SolveTimeInput): SolveTimeResult {
   const i = periodRate(input.annualRate, input.compounding, p);
   const fv = new D(input.target);
   const pv = new D(input.current);
-  const unreachable: SolveTimeResult = { periods: null, periodsWhole: null, months: null, years: null, reachable: false };
+  const unreachable: SolveTimeResult = {
+    periods: null,
+    periodsWhole: null,
+    months: null,
+    years: null,
+    reachable: false,
+  };
 
   const done = (periods: number): SolveTimeResult => {
     const whole = Math.ceil(periods - 1e-9);

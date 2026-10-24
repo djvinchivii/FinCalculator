@@ -1,7 +1,13 @@
 "use client";
 
 import { z } from "zod";
-import { futureCost, inflationSeries, purchasingPower, realReturn, type InflationRow } from "@/lib/finance";
+import {
+  futureCost,
+  inflationSeries,
+  purchasingPower,
+  realReturn,
+  type InflationRow,
+} from "@/lib/finance";
 import { money, numberText, percent } from "@/lib/schema";
 import { formatCurrency, formatNumber, formatPercent } from "@/lib/format";
 import { pctPhrase, yearsPhrase } from "@/lib/text";
@@ -9,7 +15,11 @@ import { useCalculator } from "@/components/calculator/useCalculator";
 import { CalculatorPanels, InputGroup } from "@/components/calculator/CalculatorPanels";
 import { ResultSummary } from "@/components/calculator/ResultSummary";
 import { ScheduleTable } from "@/components/calculator/ScheduleTable";
-import { CopyResultsButton, ExportButton, ShareButton } from "@/components/calculator/ActionButtons";
+import {
+  CopyResultsButton,
+  ExportButton,
+  ShareButton,
+} from "@/components/calculator/ActionButtons";
 import { MoneyField, NumberField, PercentField } from "@/components/ui/FormFields";
 import { GrowthChart } from "@/components/charts";
 
@@ -60,12 +70,25 @@ export default function Inflation() {
       inputs={
         <>
           <InputGroup title="Prices">
-            <MoneyField name="amount" label="Amount" tooltip="A price today (or a sum of money) to project forward." />
-            <PercentField name="inflation" label="Annual inflation rate" slider={{ min: 0, max: 15, step: 0.1 }} tooltip="How fast prices rise each year on average. The U.S. long-run average is roughly 3%." />
+            <MoneyField
+              name="amount"
+              label="Amount"
+              tooltip="A price today (or a sum of money) to project forward."
+            />
+            <PercentField
+              name="inflation"
+              label="Annual inflation rate"
+              slider={{ min: 0, max: 15, step: 0.1 }}
+              tooltip="How fast prices rise each year on average. The U.S. long-run average is roughly 3%."
+            />
             <NumberField name="years" label="Years" suffix="years" slider={{ min: 1, max: 50 }} />
           </InputGroup>
           <InputGroup title="Real return">
-            <PercentField name="nominalReturn" label="Nominal investment return" tooltip="The return you earn before accounting for inflation." />
+            <PercentField
+              name="nominalReturn"
+              label="Nominal investment return"
+              tooltip="The return you earn before accounting for inflation."
+            />
           </InputGroup>
         </>
       }
@@ -78,9 +101,21 @@ export default function Inflation() {
               headline={formatCurrency(result.futureCost)}
               summary={summaryText(inputs, result)}
               stats={[
-                { label: "Purchasing power of today's amount", value: formatCurrency(result.purchasingPower), tone: "bad" },
-                { label: "Real return (Fisher)", value: formatPercent(result.realReturn, 4), hint: `${formatPercent(inputs.nominalReturn)} nominal − inflation, compounded` },
-                { label: "Simple subtraction (approx.)", value: formatPercent(result.naiveReal, 4), hint: `overstates by ${formatNumber((result.naiveReal - result.realReturn) * 100, 4)} pts` },
+                {
+                  label: "Purchasing power of today's amount",
+                  value: formatCurrency(result.purchasingPower),
+                  tone: "bad",
+                },
+                {
+                  label: "Real return (Fisher)",
+                  value: formatPercent(result.realReturn, 4),
+                  hint: `${formatPercent(inputs.nominalReturn)} nominal − inflation, compounded`,
+                },
+                {
+                  label: "Simple subtraction (approx.)",
+                  value: formatPercent(result.naiveReal, 4),
+                  hint: `overstates by ${formatNumber((result.naiveReal - result.realReturn) * 100, 4)} pts`,
+                },
               ]}
               actions={
                 <>
@@ -105,10 +140,22 @@ export default function Inflation() {
                 variant="line"
                 xKey="year"
                 xLabel="Year"
-                data={result.rows.map((r) => ({ year: r.year, futureCost: r.futureCost, purchasingPower: r.purchasingPower }))}
+                data={result.rows.map((r) => ({
+                  year: r.year,
+                  futureCost: r.futureCost,
+                  purchasingPower: r.purchasingPower,
+                }))}
                 series={[
-                  { key: "futureCost", label: "Cost of the same item", color: "rgb(var(--chart-3))" },
-                  { key: "purchasingPower", label: "What your cash can buy", color: "rgb(var(--chart-1))" },
+                  {
+                    key: "futureCost",
+                    label: "Cost of the same item",
+                    color: "rgb(var(--chart-3))",
+                  },
+                  {
+                    key: "purchasingPower",
+                    label: "What your cash can buy",
+                    color: "rgb(var(--chart-1))",
+                  },
                 ]}
               />
             )}

@@ -6,7 +6,9 @@ export default function HubPage() {
   return (
     <div className="space-y-12">
       <section className="space-y-4 pt-2">
-        <p className="text-sm font-semibold uppercase tracking-wider text-brand">Financial & interest calculators</p>
+        <p className="text-sm font-semibold uppercase tracking-wider text-brand">
+          Financial & interest calculators
+        </p>
         <h1 className="max-w-3xl font-display text-3xl font-bold tracking-tight sm:text-5xl">
           Understand your money, one calculation at a time.
         </h1>

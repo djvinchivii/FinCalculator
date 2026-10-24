@@ -47,12 +47,16 @@ export function parseState<T extends object>(params: URLSearchParams, defaults: 
         const parsed: unknown = JSON.parse(raw);
         if (!Array.isArray(parsed) || parsed.length > 50) continue;
         const template = fallback[0];
-        if (typeof template === "string" || (fallback.length === 0 && parsed.every((p) => typeof p === "string"))) {
+        if (
+          typeof template === "string" ||
+          (fallback.length === 0 && parsed.every((p) => typeof p === "string"))
+        ) {
           if (parsed.every((p) => typeof p === "string")) out[key] = parsed;
         } else if (parsed.every(isStringRecord)) {
-          out[key] = template && isStringRecord(template)
-            ? parsed.map((p) => ({ ...template, ...pick(p, Object.keys(template)) }))
-            : parsed;
+          out[key] =
+            template && isStringRecord(template)
+              ? parsed.map((p) => ({ ...template, ...pick(p, Object.keys(template)) }))
+              : parsed;
         }
       } catch {
         // ignore malformed JSON and keep the default
@@ -73,7 +77,9 @@ function pick(record: UrlRecord, keys: string[]): UrlRecord {
 
 /** Builds a full shareable URL for the current page with the given state. */
 export function buildShareUrl(state: object, base?: string): string {
-  const origin = base ?? (typeof window !== "undefined" ? `${window.location.origin}${window.location.pathname}` : "");
+  const origin =
+    base ??
+    (typeof window !== "undefined" ? `${window.location.origin}${window.location.pathname}` : "");
   const qs = serializeState(state);
   return qs ? `${origin}?${qs}` : origin;
 }

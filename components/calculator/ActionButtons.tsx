@@ -39,7 +39,11 @@ function useFlash(): [string | null, (msg: string) => void] {
 export function ShareButton({ getUrl }: { getUrl: () => string }) {
   const [flash, setFlash] = useFlash();
   return (
-    <button type="button" className={btn} onClick={async () => setFlash((await copyText(getUrl())) ? "Link copied!" : "Copy failed")}>
+    <button
+      type="button"
+      className={btn}
+      onClick={async () => setFlash((await copyText(getUrl())) ? "Link copied!" : "Copy failed")}
+    >
       <span aria-hidden="true">🔗</span>
       <span aria-live="polite">{flash ?? "Share link"}</span>
     </button>
@@ -49,7 +53,11 @@ export function ShareButton({ getUrl }: { getUrl: () => string }) {
 export function CopyResultsButton({ getText }: { getText: () => string }) {
   const [flash, setFlash] = useFlash();
   return (
-    <button type="button" className={btn} onClick={async () => setFlash((await copyText(getText())) ? "Copied!" : "Copy failed")}>
+    <button
+      type="button"
+      className={btn}
+      onClick={async () => setFlash((await copyText(getText())) ? "Copied!" : "Copy failed")}
+    >
       <span aria-hidden="true">📋</span>
       <span aria-live="polite">{flash ?? "Copy results"}</span>
     </button>
@@ -68,7 +76,12 @@ export function ExportButton<Row>({
   label?: string;
 }) {
   return (
-    <button type="button" className={btn} disabled={rows.length === 0} onClick={() => downloadCsv(filename, toCsv(rows, columns))}>
+    <button
+      type="button"
+      className={btn}
+      disabled={rows.length === 0}
+      onClick={() => downloadCsv(filename, toCsv(rows, columns))}
+    >
       <span aria-hidden="true">⬇️</span>
       {label}
     </button>

@@ -9,7 +9,13 @@ import { useCalculator } from "@/components/calculator/useCalculator";
 import { CalculatorPanels, InputGroup } from "@/components/calculator/CalculatorPanels";
 import { ResultSummary } from "@/components/calculator/ResultSummary";
 import { CopyResultsButton, ShareButton } from "@/components/calculator/ActionButtons";
-import { MoneyField, NumberField, PercentField, SelectField, ToggleField } from "@/components/ui/FormFields";
+import {
+  MoneyField,
+  NumberField,
+  PercentField,
+  SelectField,
+  ToggleField,
+} from "@/components/ui/FormFields";
 import { BreakdownDonut } from "@/components/charts";
 
 const schema = z
@@ -23,7 +29,11 @@ const schema = z
   .superRefine((v, ctx) => {
     const maxByUnit = { days: 36_500, months: 1_200, years: 100 } as const;
     if (v.time > maxByUnit[v.unit]) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["time"], message: "Terms are capped at 100 years" });
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["time"],
+        message: "Terms are capped at 100 years",
+      });
     }
   });
 
@@ -48,9 +58,22 @@ export default function SimpleInterest() {
       isStale={isStale}
       inputs={
         <InputGroup>
-          <MoneyField name="principal" label="Principal" tooltip="The original amount borrowed or invested." />
-          <PercentField name="rate" label="Annual interest rate" slider={{ min: 0, max: 30, step: 0.1 }} tooltip="The yearly percentage charged or earned on the principal." />
-          <NumberField name="time" label="Time" tooltip="How long the money is borrowed or invested." />
+          <MoneyField
+            name="principal"
+            label="Principal"
+            tooltip="The original amount borrowed or invested."
+          />
+          <PercentField
+            name="rate"
+            label="Annual interest rate"
+            slider={{ min: 0, max: 30, step: 0.1 }}
+            tooltip="The yearly percentage charged or earned on the principal."
+          />
+          <NumberField
+            name="time"
+            label="Time"
+            tooltip="How long the money is borrowed or invested."
+          />
           <ToggleField
             name="unit"
             label="Time unit"
@@ -84,14 +107,22 @@ export default function SimpleInterest() {
               stats={[
                 { label: "Total (principal + interest)", value: formatCurrency(result.total) },
                 { label: "Time in years", value: `${formatNumber(result.years, 4)} years` },
-                { label: "Interest per year", value: formatCurrency(inputs.principal * inputs.rate) },
+                {
+                  label: "Interest per year",
+                  value: formatCurrency(inputs.principal * inputs.rate),
+                },
               ]}
               actions={
                 <>
                   <ShareButton getUrl={getShareUrl} />
                   <CopyResultsButton
                     getText={() =>
-                      [`Simple interest: ${formatCurrency(result.interest)}`, `Total: ${formatCurrency(result.total)}`, summaryText(inputs, result), getShareUrl()].join("\n")
+                      [
+                        `Simple interest: ${formatCurrency(result.interest)}`,
+                        `Total: ${formatCurrency(result.total)}`,
+                        summaryText(inputs, result),
+                        getShareUrl(),
+                      ].join("\n")
                     }
                   />
                 </>
@@ -102,8 +133,18 @@ export default function SimpleInterest() {
               centerLabel="Total"
               centerValue={formatCurrency(result.total, { cents: false })}
               slices={[
-                { key: "principal", label: "Principal", value: inputs.principal, color: "rgb(var(--chart-1))" },
-                { key: "interest", label: "Interest", value: result.interest, color: "rgb(var(--chart-3))" },
+                {
+                  key: "principal",
+                  label: "Principal",
+                  value: inputs.principal,
+                  color: "rgb(var(--chart-1))",
+                },
+                {
+                  key: "interest",
+                  label: "Interest",
+                  value: result.interest,
+                  color: "rgb(var(--chart-3))",
+                },
               ]}
             />
           </>

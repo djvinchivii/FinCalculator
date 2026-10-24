@@ -1,7 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useForm, useWatch, type DefaultValues, type FieldValues, type UseFormReturn } from "react-hook-form";
+import {
+  useForm,
+  useWatch,
+  type DefaultValues,
+  type FieldValues,
+  type UseFormReturn,
+} from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
 import { buildShareUrl, parseState, serializeState } from "@/lib/url-state";
@@ -80,7 +86,10 @@ export function useCalculator<TForm extends FieldValues, TOut, TResult>(
     setHydrated(true);
   }, [defaults, clientDefaults, reset, trigger]);
 
-  const parsed = useMemo(() => schema.safeParse(JSON.parse(debounced) as unknown), [schema, debounced]);
+  const parsed = useMemo(
+    () => schema.safeParse(JSON.parse(debounced) as unknown),
+    [schema, debounced],
+  );
 
   const fresh = useMemo(() => {
     if (!parsed.success) return null;

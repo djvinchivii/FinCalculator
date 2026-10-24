@@ -1,7 +1,12 @@
 "use client";
 
 import { z } from "zod";
-import { PAYMENT_FREQUENCY_OPTIONS, amortize, type LoanResult, type PaymentFrequency } from "@/lib/finance";
+import {
+  PAYMENT_FREQUENCY_OPTIONS,
+  amortize,
+  type LoanResult,
+  type PaymentFrequency,
+} from "@/lib/finance";
 import { isoDate, money, numberText, percent, toOptions } from "@/lib/schema";
 import { formatCurrency, formatDate, formatDuration, formatMonthYear } from "@/lib/format";
 import { perPeriod, pctPhrase } from "@/lib/text";
@@ -9,8 +14,19 @@ import { useCalculator } from "@/components/calculator/useCalculator";
 import { CalculatorPanels, InputGroup } from "@/components/calculator/CalculatorPanels";
 import { ResultSummary, type Stat } from "@/components/calculator/ResultSummary";
 import { ScheduleTable } from "@/components/calculator/ScheduleTable";
-import { CopyResultsButton, ExportButton, ShareButton } from "@/components/calculator/ActionButtons";
-import { DateField, MoneyField, NumberField, PercentField, SelectField, ToggleField } from "@/components/ui/FormFields";
+import {
+  CopyResultsButton,
+  ExportButton,
+  ShareButton,
+} from "@/components/calculator/ActionButtons";
+import {
+  DateField,
+  MoneyField,
+  NumberField,
+  PercentField,
+  SelectField,
+  ToggleField,
+} from "@/components/ui/FormFields";
 import { AmortizationChart } from "@/components/charts";
 import { localTodayISO, yearlyAmortization, scheduleCsvColumns } from "./loan-shared";
 
@@ -20,7 +36,9 @@ const schema = z
     annualRate: percent(),
     term: numberText({ min: 0, exclusiveMin: true }),
     termUnit: z.enum(["years", "months"]),
-    paymentsPerYear: z.enum(["12", "24", "26", "52"]).transform((v) => Number(v) as PaymentFrequency),
+    paymentsPerYear: z
+      .enum(["12", "24", "26", "52"])
+      .transform((v) => Number(v) as PaymentFrequency),
     startDate: isoDate(),
     extraPerPayment: money({ optional: true }),
     extraYearly: money({ optional: true }),
@@ -29,9 +47,18 @@ const schema = z
   })
   .superRefine((v, ctx) => {
     const months = v.termUnit === "years" ? v.term * 12 : v.term;
-    if (months > 1200) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["term"], message: "Terms are capped at 100 years" });
+    if (months > 1200)
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["term"],
+        message: "Terms are capped at 100 years",
+      });
     if (v.extraOneTime > 0 && !/^\d{4}-\d{2}-\d{2}$/.test(v.extraOneTimeDate)) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["extraOneTimeDate"], message: "Pick the date for your one-time payment" });
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["extraOneTimeDate"],
+        message: "Pick the date for your one-time payment",
+      });
     }
   });
 
@@ -75,20 +102,34 @@ function summaryText(v: Inputs, r: LoanResult): string {
 }
 
 export default function Loan() {
-  const { form, result, inputs, isStale, getShareUrl } = useCalculator(schema, defaults, compute, clientDefaults);
+  const { form, result, inputs, isStale, getShareUrl } = useCalculator(
+    schema,
+    defaults,
+    compute,
+    clientDefaults,
+  );
 
   const stats: Stat[] = result
     ? [
         { label: "Total interest", value: formatCurrency(result.totalInterest), tone: "bad" },
         { label: "Total paid", value: formatCurrency(result.totalPaid) },
-        { label: "Payoff date", value: formatMonthYear(result.payoffDate), hint: `${result.numberOfPayments} payments` },
+        {
+          label: "Payoff date",
+          value: formatMonthYear(result.payoffDate),
+          hint: `${result.numberOfPayments} payments`,
+        },
       ]
     : [];
   if (result?.hasExtras) {
     const perYear = inputs?.paymentsPerYear ?? 12;
     stats.push(
       { label: "Interest saved", value: formatCurrency(result.interestSaved), tone: "good" },
-      { label: "Time saved", value: formatDuration((result.paymentsSaved / perYear) * 12), tone: "good", hint: `${result.paymentsSaved} fewer payments` },
+      {
+        label: "Time saved",
+        value: formatDuration((result.paymentsSaved / perYear) * 12),
+        tone: "good",
+        hint: `${result.paymentsSaved} fewer payments`,
+      },
     );
   }
 
@@ -99,10 +140,23 @@ export default function Loan() {
       inputs={
         <>
           <InputGroup title="Loan">
-            <MoneyField name="principal" label="Loan amount" tooltip="How much you're borrowing (the principal)." />
-            <PercentField name="annualRate" label="Annual interest rate" slider={{ min: 0, max: 25, step: 0.05 }} tooltip="The yearly rate the lender charges (APR), before it's split into per-payment interest." />
+            <MoneyField
+              name="principal"
+              label="Loan amount"
+              tooltip="How much you're borrowing (the principal)."
+            />
+            <PercentField
+              name="annualRate"
+              label="Annual interest rate"
+              slider={{ min: 0, max: 25, step: 0.05 }}
+              tooltip="The yearly rate the lender charges (APR), before it's split into per-payment interest."
+            />
             <div className="grid grid-cols-[1fr_auto] items-end gap-3">
-              <NumberField name="term" label="Loan term" tooltip="How long you have to repay the loan." />
+              <NumberField
+                name="term"
+                label="Loan term"
+                tooltip="How long you have to repay the loan."
+              />
               <ToggleField
                 name="termUnit"
                 label="Term unit"
@@ -112,14 +166,40 @@ export default function Loan() {
                 ]}
               />
             </div>
-            <SelectField name="paymentsPerYear" label="Payment frequency" options={toOptions(PAYMENT_FREQUENCY_OPTIONS)} tooltip="How often you make a payment. The annual rate is divided by the number of payments per year." />
-            <DateField name="startDate" label="Loan start date" hint="Your first payment is due one period after this date." tooltip="The date the loan is funded; it sets your payoff date." />
+            <SelectField
+              name="paymentsPerYear"
+              label="Payment frequency"
+              options={toOptions(PAYMENT_FREQUENCY_OPTIONS)}
+              tooltip="How often you make a payment. The annual rate is divided by the number of payments per year."
+            />
+            <DateField
+              name="startDate"
+              label="Loan start date"
+              hint="Your first payment is due one period after this date."
+              tooltip="The date the loan is funded; it sets your payoff date."
+            />
           </InputGroup>
           <InputGroup title="Extra payments (optional)">
-            <MoneyField name="extraPerPayment" label="Extra with every payment" tooltip="Extra principal added to each regular payment. Even small amounts cut interest a lot." />
-            <MoneyField name="extraYearly" label="Extra once a year" tooltip="An additional principal payment each year, e.g. from a tax refund or bonus." />
-            <MoneyField name="extraOneTime" label="One-time extra payment" tooltip="A single lump sum toward principal." />
-            <DateField name="extraOneTimeDate" label="One-time payment date" hint="Applied to the first payment on or after this date." />
+            <MoneyField
+              name="extraPerPayment"
+              label="Extra with every payment"
+              tooltip="Extra principal added to each regular payment. Even small amounts cut interest a lot."
+            />
+            <MoneyField
+              name="extraYearly"
+              label="Extra once a year"
+              tooltip="An additional principal payment each year, e.g. from a tax refund or bonus."
+            />
+            <MoneyField
+              name="extraOneTime"
+              label="One-time extra payment"
+              tooltip="A single lump sum toward principal."
+            />
+            <DateField
+              name="extraOneTimeDate"
+              label="One-time payment date"
+              hint="Applied to the first payment on or after this date."
+            />
           </InputGroup>
         </>
       }
@@ -142,7 +222,9 @@ export default function Loan() {
                         `Total interest: ${formatCurrency(result.totalInterest)}`,
                         `Total paid: ${formatCurrency(result.totalPaid)}`,
                         `Payoff date: ${formatDate(result.payoffDate)}`,
-                        result.hasExtras ? `Interest saved with extra payments: ${formatCurrency(result.interestSaved)}` : "",
+                        result.hasExtras
+                          ? `Interest saved with extra payments: ${formatCurrency(result.interestSaved)}`
+                          : "",
                         getShareUrl(),
                       ]
                         .filter(Boolean)
@@ -152,7 +234,9 @@ export default function Loan() {
                 </>
               }
             />
-            <AmortizationChart data={yearlyAmortization(result.rows, inputs.paymentsPerYear, inputs.principal)} />
+            <AmortizationChart
+              data={yearlyAmortization(result.rows, inputs.paymentsPerYear, inputs.principal)}
+            />
             <ScheduleTable
               title="Amortization schedule"
               rows={result.rows}
@@ -163,10 +247,23 @@ export default function Loan() {
                 { header: "Payment", cell: (r) => formatCurrency(r.payment) },
                 { header: "Principal", cell: (r) => formatCurrency(r.principal) },
                 { header: "Interest", cell: (r) => formatCurrency(r.interest) },
-                ...(result.hasExtras ? [{ header: "Extra", cell: (r: LoanResult["rows"][number]) => formatCurrency(r.extra) }] : []),
+                ...(result.hasExtras
+                  ? [
+                      {
+                        header: "Extra",
+                        cell: (r: LoanResult["rows"][number]) => formatCurrency(r.extra),
+                      },
+                    ]
+                  : []),
                 { header: "Balance", cell: (r) => formatCurrency(r.balance) },
               ]}
-              actions={<ExportButton filename="loan-amortization-schedule" rows={result.rows} columns={scheduleCsvColumns} />}
+              actions={
+                <ExportButton
+                  filename="loan-amortization-schedule"
+                  rows={result.rows}
+                  columns={scheduleCsvColumns}
+                />
+              }
             />
           </>
         )

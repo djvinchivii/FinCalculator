@@ -73,7 +73,12 @@ export function loanPaymentExact(principal: number, ratePerPeriod: number, n: nu
 }
 
 /** Level periodic payment rounded to cents. */
-export function loanPayment(principal: number, annualRate: number, n: number, paymentsPerYear: number): number {
+export function loanPayment(
+  principal: number,
+  annualRate: number,
+  n: number,
+  paymentsPerYear: number,
+): number {
   return num(cents(loanPaymentExact(principal, annualRate / paymentsPerYear, n)));
 }
 

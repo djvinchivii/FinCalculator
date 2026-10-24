@@ -34,7 +34,11 @@ export function Tabs({
     }
   };
   return (
-    <div role="tablist" aria-label={label} className="flex gap-1 rounded-lg border border-border bg-surface-2 p-1">
+    <div
+      role="tablist"
+      aria-label={label}
+      className="flex gap-1 rounded-lg border border-border bg-surface-2 p-1"
+    >
       {options.map((o, i) => {
         const selected = o.value === value;
         return (

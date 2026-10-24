@@ -60,7 +60,8 @@ export function projectRetirement(input: RetirementInput): RetirementResult {
   const preRate = monthlyRate(input.preReturn);
   const postRate = monthlyRate(input.postReturn);
   const contribution = new D(input.monthlyContribution);
-  const fireNumber = input.withdrawalRate > 0 ? num(new D(input.annualSpending).div(input.withdrawalRate)) : 0;
+  const fireNumber =
+    input.withdrawalRate > 0 ? num(new D(input.annualSpending).div(input.withdrawalRate)) : 0;
 
   const rows: RetirementYearRow[] = [];
   let balance = new D(input.currentSavings);
@@ -100,10 +101,16 @@ export function projectRetirement(input: RetirementInput): RetirementResult {
   let fireAge: number | null = null;
   if (fireNumber > 0) {
     let b = new D(input.currentSavings);
+    // Compare in today's dollars: the FIRE target grows with inflation month by month.
+    let target = new D(fireNumber);
+    const monthlyInflation = deflator(input.inflation, 1 / 12);
     const maxMonths = Math.max(0, Math.round((FIRE_SEARCH_AGE - input.currentAge) * 12));
     for (let m = 0; m <= maxMonths; m++) {
-      if (m > 0) b = b.plus(b.times(preRate)).plus(contribution);
-      if (b.div(deflator(input.inflation, m / 12)).gte(fireNumber)) {
+      if (m > 0) {
+        b = b.plus(b.times(preRate)).plus(contribution);
+        target = target.times(monthlyInflation);
+      }
+      if (b.gte(target)) {
         fireAge = Math.round((input.currentAge + m / 12) * 10) / 10;
         break;
       }
@@ -111,12 +118,16 @@ export function projectRetirement(input: RetirementInput): RetirementResult {
   }
 
   // Drawdown: withdraw inflation-adjusted spending at the start of each month.
-  const firstYearSpending = new D(input.annualSpending).times(deflator(input.inflation, yearsToRetirement));
+  const firstYearSpending = new D(input.annualSpending).times(
+    deflator(input.inflation, yearsToRetirement),
+  );
   const drawdownMonths = Math.max(0, Math.round((HORIZON_AGE - input.retirementAge) * 12));
   let depletionMonth: number | null = null;
+  const annualInflation = new D(input.inflation).plus(1);
+  let monthlySpending = firstYearSpending.div(12);
   for (let m = 1; m <= drawdownMonths; m++) {
-    const yearIndex = Math.floor((m - 1) / 12);
-    const withdrawal = D.min(balance, firstYearSpending.times(deflator(input.inflation, yearIndex)).div(12));
+    if (m > 1 && (m - 1) % 12 === 0) monthlySpending = monthlySpending.times(annualInflation);
+    const withdrawal = D.min(balance, monthlySpending);
     balance = balance.minus(withdrawal);
     yWithdraw = yWithdraw.plus(withdrawal);
     const growth = balance.times(postRate);
@@ -124,7 +135,8 @@ export function projectRetirement(input: RetirementInput): RetirementResult {
     yGrowth = yGrowth.plus(growth);
     const depleted = balance.lte(0.005);
     if (depleted) balance = ZERO;
-    if (m % 12 === 0 || depleted || m === drawdownMonths) pushRow(accumulationMonths + m, "retired");
+    if (m % 12 === 0 || depleted || m === drawdownMonths)
+      pushRow(accumulationMonths + m, "retired");
     if (depleted) {
       depletionMonth = m;
       break;
@@ -139,10 +151,15 @@ export function projectRetirement(input: RetirementInput): RetirementResult {
     nestEgg: num(nestEgg),
     nestEggReal: num(nestEgg.div(deflator(input.inflation, yearsToRetirement))),
     fireNumber,
-    fireNumberAtRetirement: num(new D(fireNumber).times(deflator(input.inflation, yearsToRetirement))),
+    fireNumberAtRetirement: num(
+      new D(fireNumber).times(deflator(input.inflation, yearsToRetirement)),
+    ),
     fireAge,
     onTrack: fireAge !== null && fireAge <= input.retirementAge,
-    depletionAge: depletionMonth === null ? null : Math.round((input.retirementAge + depletionMonth / 12) * 10) / 10,
+    depletionAge:
+      depletionMonth === null
+        ? null
+        : Math.round((input.retirementAge + depletionMonth / 12) * 10) / 10,
     yearsLasting: depletionMonth === null ? null : Math.round((depletionMonth / 12) * 10) / 10,
     firstYearSpendingNominal: num(firstYearSpending),
     totalContributed: num(totalContributed),

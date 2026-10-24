@@ -2,6 +2,7 @@
 import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
+import zlib from "node:zlib";
 
 const root = path.resolve(process.argv[2] ?? "out");
 const port = Number(process.argv[3] ?? 3000);
@@ -36,8 +37,31 @@ http
       return;
     }
     const type = TYPES[path.extname(file)] ?? "application/octet-stream";
-    const cache = file.includes(`${path.sep}_next${path.sep}static`) ? "public, max-age=31536000, immutable" : "no-cache";
-    res.writeHead(200, { "Content-Type": type, "Cache-Control": cache });
-    fs.createReadStream(file).pipe(res);
+    const cache = file.includes(`${path.sep}_next${path.sep}static`)
+      ? "public, max-age=31536000, immutable"
+      : "no-cache";
+    // Compress text assets like a production host (Vercel serves brotli/gzip).
+    const accepts = String(req.headers["accept-encoding"] ?? "");
+    const compressible = /^(text\/|application\/json|image\/svg)/.test(type);
+    if (compressible && /\bbr\b/.test(accepts)) {
+      res.writeHead(200, {
+        "Content-Type": type,
+        "Cache-Control": cache,
+        "Content-Encoding": "br",
+        Vary: "Accept-Encoding",
+      });
+      fs.createReadStream(file).pipe(zlib.createBrotliCompress()).pipe(res);
+    } else if (compressible && /\bgzip\b/.test(accepts)) {
+      res.writeHead(200, {
+        "Content-Type": type,
+        "Cache-Control": cache,
+        "Content-Encoding": "gzip",
+        Vary: "Accept-Encoding",
+      });
+      fs.createReadStream(file).pipe(zlib.createGzip()).pipe(res);
+    } else {
+      res.writeHead(200, { "Content-Type": type, "Cache-Control": cache });
+      fs.createReadStream(file).pipe(res);
+    }
   })
   .listen(port, () => console.log(`Serving ${root} at http://localhost:${port}`));

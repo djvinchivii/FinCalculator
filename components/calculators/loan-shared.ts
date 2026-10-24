@@ -10,7 +10,11 @@ export function localTodayISO(): string {
 }
 
 /** Rolls a payment schedule up into loan years for the principal-vs-interest chart. */
-export function yearlyAmortization(rows: AmortizationRow[], paymentsPerYear: number, principal: number): AmortizationYear[] {
+export function yearlyAmortization(
+  rows: AmortizationRow[],
+  paymentsPerYear: number,
+  principal: number,
+): AmortizationYear[] {
   const years: AmortizationYear[] = [];
   for (const row of rows) {
     const year = Math.ceil(row.period / paymentsPerYear);

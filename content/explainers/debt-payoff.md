@@ -1,6 +1,6 @@
 ## What it is
 
-When you have several debts, *which one you attack first* changes how fast you finish and how much interest you pay. You pay the minimum on everything, then throw every extra dollar at one target debt. When it's gone, its payment "rolls over" to the next target.
+When you have several debts, _which one you attack first_ changes how fast you finish and how much interest you pay. You pay the minimum on everything, then throw every extra dollar at one target debt. When it's gone, its payment "rolls over" to the next target.
 
 - **Avalanche** — target the highest APR first. Mathematically, this pays the least interest.
 - **Snowball** — target the smallest balance first. You knock out whole debts sooner, which keeps many people motivated.
@@ -13,7 +13,7 @@ If your total payment is less than or equal to the monthly interest, the balance
 
 ## Worked example
 
-A $1,000 card at 24% APR charges `1,000 × 0.24 ÷ 12 = $20` of interest in the first month. Paying $15 a month, the balance *grows* by $5 — it will **never** be paid off. At $50 a month it's gone in 26 months with about $290 of interest.
+A $1,000 card at 24% APR charges `1,000 × 0.24 ÷ 12 = $20` of interest in the first month. Paying $15 a month, the balance _grows_ by $5 — it will **never** be paid off. At $50 a month it's gone in 26 months with about $290 of interest.
 
 ## A common mistake
 

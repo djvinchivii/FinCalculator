@@ -33,7 +33,15 @@ interface NumberFieldProps extends BaseProps {
 }
 
 /** Form-bound numeric field (value stored as the raw text the user typed). */
-export function NumberField({ name, label, tooltip, hint, className, slider, ...input }: NumberFieldProps) {
+export function NumberField({
+  name,
+  label,
+  tooltip,
+  hint,
+  className,
+  slider,
+  ...input
+}: NumberFieldProps) {
   const { control } = useFormContext();
   const id = fieldId(name);
   return (
@@ -44,7 +52,14 @@ export function NumberField({ name, label, tooltip, hint, className, slider, ...
         const error = fieldState.error?.message;
         const value = typeof field.value === "string" ? field.value : String(field.value ?? "");
         return (
-          <FieldChrome id={id} label={label} tooltip={tooltip} hint={hint} error={error} className={className}>
+          <FieldChrome
+            id={id}
+            label={label}
+            tooltip={tooltip}
+            hint={hint}
+            error={error}
+            className={className}
+          >
             <NumberInput
               id={id}
               ref={field.ref}
@@ -90,8 +105,21 @@ export function SelectField({ name, label, tooltip, hint, className, options }: 
   const id = fieldId(name);
   const error = getFieldState(name, formState).error?.message;
   return (
-    <FieldChrome id={id} label={label} tooltip={tooltip} hint={hint} error={error} className={className}>
-      <Select id={id} options={options} invalid={Boolean(error)} aria-describedby={describedBy(id, error, hint)} {...register(name)} />
+    <FieldChrome
+      id={id}
+      label={label}
+      tooltip={tooltip}
+      hint={hint}
+      error={error}
+      className={className}
+    >
+      <Select
+        id={id}
+        options={options}
+        invalid={Boolean(error)}
+        aria-describedby={describedBy(id, error, hint)}
+        {...register(name)}
+      />
     </FieldChrome>
   );
 }
@@ -109,7 +137,13 @@ export function ToggleField({ name, label, tooltip, className, options }: Toggle
       render={({ field }) => (
         <div className={`flex items-start gap-1 ${className ?? ""}`}>
           <div className="flex-1">
-            <Toggle label={label} name={field.name} value={String(field.value)} onChange={field.onChange} options={options} />
+            <Toggle
+              label={label}
+              name={field.name}
+              value={String(field.value)}
+              onChange={field.onChange}
+              options={options}
+            />
           </div>
           {tooltip && (
             <div className="pt-0.5">
@@ -127,7 +161,14 @@ export function DateField({ name, label, tooltip, hint, className }: BaseProps) 
   const id = fieldId(name);
   const error = getFieldState(name, formState).error?.message;
   return (
-    <FieldChrome id={id} label={label} tooltip={tooltip} hint={hint} error={error} className={className}>
+    <FieldChrome
+      id={id}
+      label={label}
+      tooltip={tooltip}
+      hint={hint}
+      error={error}
+      className={className}
+    >
       <input
         id={id}
         type="date"
@@ -140,12 +181,26 @@ export function DateField({ name, label, tooltip, hint, className }: BaseProps) 
   );
 }
 
-export function TextField({ name, label, tooltip, hint, className, placeholder }: BaseProps & { placeholder?: string }) {
+export function TextField({
+  name,
+  label,
+  tooltip,
+  hint,
+  className,
+  placeholder,
+}: BaseProps & { placeholder?: string }) {
   const { register, getFieldState, formState } = useFormContext();
   const id = fieldId(name);
   const error = getFieldState(name, formState).error?.message;
   return (
-    <FieldChrome id={id} label={label} tooltip={tooltip} hint={hint} error={error} className={className}>
+    <FieldChrome
+      id={id}
+      label={label}
+      tooltip={tooltip}
+      hint={hint}
+      error={error}
+      className={className}
+    >
       <input
         id={id}
         type="text"

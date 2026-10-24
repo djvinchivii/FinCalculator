@@ -5,7 +5,10 @@ import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 
 export const metadata: Metadata = {
-  title: { default: `${SITE.name} — Financial & Interest Calculators`, template: `%s · ${SITE.name}` },
+  title: {
+    default: `${SITE.name} — Financial & Interest Calculators`,
+    template: `%s · ${SITE.name}`,
+  },
   description: SITE.tagline,
 };
 

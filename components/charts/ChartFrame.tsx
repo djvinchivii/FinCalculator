@@ -30,12 +30,19 @@ export function ChartFrame({
   return (
     <figure className="rounded-card border border-border bg-surface p-4 shadow-card sm:p-6">
       <figcaption className="mb-3 text-lg font-semibold">{title}</figcaption>
-      <div aria-hidden="true" style={{ height }} className="w-full min-w-0">
+      <div aria-hidden="true" inert style={{ height }} className="w-full min-w-0">
         {children}
       </div>
       <details className="mt-3 text-sm">
-        <summary className="cursor-pointer rounded font-medium text-ink-muted hover:text-ink">View chart data as a table</summary>
-        <div className="mt-2 max-h-72 overflow-auto">
+        <summary className="cursor-pointer rounded font-medium text-ink-muted hover:text-ink">
+          View chart data as a table
+        </summary>
+        <div
+          className="mt-2 max-h-72 overflow-auto"
+          tabIndex={0}
+          role="region"
+          aria-label={`${title} data`}
+        >
           <table className="w-full border-collapse tabular-nums">
             <caption className="sr-only">{title}</caption>
             <thead className="sticky top-0 bg-surface-2">

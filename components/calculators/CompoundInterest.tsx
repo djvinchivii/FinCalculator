@@ -1,7 +1,12 @@
 "use client";
 
 import { z } from "zod";
-import { COMPOUNDING_OPTIONS, FREQUENCY_OPTIONS, simulateCompound, type CompoundResult } from "@/lib/finance";
+import {
+  COMPOUNDING_OPTIONS,
+  FREQUENCY_OPTIONS,
+  simulateCompound,
+  type CompoundResult,
+} from "@/lib/finance";
 import { compounding, frequency, money, percent, timing, toOptions, years } from "@/lib/schema";
 import { formatCurrency, formatPercent } from "@/lib/format";
 import { perPeriod, pctPhrase, yearsPhrase } from "@/lib/text";
@@ -9,8 +14,18 @@ import { useCalculator } from "@/components/calculator/useCalculator";
 import { CalculatorPanels, InputGroup } from "@/components/calculator/CalculatorPanels";
 import { ResultSummary } from "@/components/calculator/ResultSummary";
 import { ScheduleTable } from "@/components/calculator/ScheduleTable";
-import { CopyResultsButton, ExportButton, ShareButton } from "@/components/calculator/ActionButtons";
-import { MoneyField, NumberField, PercentField, SelectField, ToggleField } from "@/components/ui/FormFields";
+import {
+  CopyResultsButton,
+  ExportButton,
+  ShareButton,
+} from "@/components/calculator/ActionButtons";
+import {
+  MoneyField,
+  NumberField,
+  PercentField,
+  SelectField,
+  ToggleField,
+} from "@/components/ui/FormFields";
 import { GrowthChart } from "@/components/charts";
 
 const schema = z.object({
@@ -21,7 +36,10 @@ const schema = z.object({
   annualRate: percent(),
   compounding: compounding(),
   years: years(),
-  contributionGrowth: percent({ optional: true, maxMessage: "Increases are capped at 100% a year" }),
+  contributionGrowth: percent({
+    optional: true,
+    maxMessage: "Increases are capped at 100% a year",
+  }),
   inflation: percent({ optional: true }),
 });
 
@@ -43,8 +61,14 @@ const defaults: Form = {
 const compute = (v: Inputs): CompoundResult => simulateCompound(v);
 
 function summaryText(v: Inputs, r: CompoundResult): string {
-  const adds = v.contribution > 0 ? ` and add ${formatCurrency(v.contribution, { cents: false })} ${perPeriod(v.contributionFrequency)}` : "";
-  const growth = v.contribution > 0 && (v.contributionGrowth ?? 0) > 0 ? ` (raising it ${pctPhrase(v.contributionGrowth)} each year)` : "";
+  const adds =
+    v.contribution > 0
+      ? ` and add ${formatCurrency(v.contribution, { cents: false })} ${perPeriod(v.contributionFrequency)}`
+      : "";
+  const growth =
+    v.contribution > 0 && (v.contributionGrowth ?? 0) > 0
+      ? ` (raising it ${pctPhrase(v.contributionGrowth)} each year)`
+      : "";
   return `If you invest ${formatCurrency(v.principal, { cents: false })}${adds}${growth} at ${pctPhrase(v.annualRate)} for ${yearsPhrase(v.years)}, you'll have about ${formatCurrency(r.futureBalance, { cents: false })}. You put in ${formatCurrency(r.totalContributed, { cents: false })} — the other ${formatCurrency(r.totalInterest, { cents: false })} is interest working for you.`;
 }
 
@@ -59,8 +83,16 @@ export default function CompoundInterest() {
       inputs={
         <>
           <InputGroup title="Money in">
-            <MoneyField name="principal" label="Initial deposit" tooltip="The lump sum you start with today." />
-            <MoneyField name="contribution" label="Recurring contribution" tooltip="The amount you add every contribution period. Leave blank for none." />
+            <MoneyField
+              name="principal"
+              label="Initial deposit"
+              tooltip="The lump sum you start with today."
+            />
+            <MoneyField
+              name="contribution"
+              label="Recurring contribution"
+              tooltip="The amount you add every contribution period. Leave blank for none."
+            />
             <SelectField
               name="contributionFrequency"
               label="Contribution frequency"
@@ -78,13 +110,37 @@ export default function CompoundInterest() {
             />
           </InputGroup>
           <InputGroup title="Growth">
-            <PercentField name="annualRate" label="Annual interest rate" slider={{ min: 0, max: 15, step: 0.1 }} tooltip="The yearly rate before compounding (nominal APR)." />
-            <SelectField name="compounding" label="Compounding frequency" options={toOptions(COMPOUNDING_OPTIONS)} tooltip="How often earned interest is added to your balance so it starts earning interest too." />
-            <NumberField name="years" label="Years" suffix="years" slider={{ min: 1, max: 50 }} tooltip="How long the money stays invested." />
+            <PercentField
+              name="annualRate"
+              label="Annual interest rate"
+              slider={{ min: 0, max: 15, step: 0.1 }}
+              tooltip="The yearly rate before compounding (nominal APR)."
+            />
+            <SelectField
+              name="compounding"
+              label="Compounding frequency"
+              options={toOptions(COMPOUNDING_OPTIONS)}
+              tooltip="How often earned interest is added to your balance so it starts earning interest too."
+            />
+            <NumberField
+              name="years"
+              label="Years"
+              suffix="years"
+              slider={{ min: 1, max: 50 }}
+              tooltip="How long the money stays invested."
+            />
           </InputGroup>
           <InputGroup title="Optional">
-            <PercentField name="contributionGrowth" label="Annual contribution increase" tooltip="Raise your contribution by this percent each year, e.g. when you get a raise." />
-            <PercentField name="inflation" label="Inflation rate" tooltip="Used to show your future balance in today's dollars (what it can actually buy)." />
+            <PercentField
+              name="contributionGrowth"
+              label="Annual contribution increase"
+              tooltip="Raise your contribution by this percent each year, e.g. when you get a raise."
+            />
+            <PercentField
+              name="inflation"
+              label="Inflation rate"
+              tooltip="Used to show your future balance in today's dollars (what it can actually buy)."
+            />
           </InputGroup>
         </>
       }
@@ -98,12 +154,23 @@ export default function CompoundInterest() {
               summary={summaryText(inputs, result)}
               stats={[
                 { label: "Total contributed", value: formatCurrency(result.totalContributed) },
-                { label: "Total interest earned", value: formatCurrency(result.totalInterest), tone: "good" },
+                {
+                  label: "Total interest earned",
+                  value: formatCurrency(result.totalInterest),
+                  tone: "good",
+                },
                 hasInflation
-                  ? { label: "In today's dollars", value: formatCurrency(result.realBalance), hint: `at ${formatPercent(inputs.inflation)} inflation` }
+                  ? {
+                      label: "In today's dollars",
+                      value: formatCurrency(result.realBalance),
+                      hint: `at ${formatPercent(inputs.inflation)} inflation`,
+                    }
                   : {
                       label: "Interest share of balance",
-                      value: result.futureBalance > 0 ? formatPercent(result.totalInterest / result.futureBalance, 1) : "—",
+                      value:
+                        result.futureBalance > 0
+                          ? formatPercent(result.totalInterest / result.futureBalance, 1)
+                          : "—",
                     },
               ]}
               actions={
@@ -115,7 +182,9 @@ export default function CompoundInterest() {
                         `Compound interest — future balance: ${formatCurrency(result.futureBalance)}`,
                         `Total contributed: ${formatCurrency(result.totalContributed)}`,
                         `Total interest: ${formatCurrency(result.totalInterest)}`,
-                        hasInflation ? `In today's dollars: ${formatCurrency(result.realBalance)}` : "",
+                        hasInflation
+                          ? `In today's dollars: ${formatCurrency(result.realBalance)}`
+                          : "",
                         summaryText(inputs, result),
                         getShareUrl(),
                       ]
@@ -133,7 +202,11 @@ export default function CompoundInterest() {
                 xLabel="Year"
                 data={[
                   { year: 0, contributed: inputs.principal, interest: 0 },
-                  ...result.years.map((y) => ({ year: y.year, contributed: y.totalContributed, interest: y.totalInterest })),
+                  ...result.years.map((y) => ({
+                    year: y.year,
+                    contributed: y.totalContributed,
+                    interest: y.totalInterest,
+                  })),
                 ]}
                 series={[
                   { key: "contributed", label: "Your contributions", color: "rgb(var(--chart-1))" },
@@ -153,7 +226,14 @@ export default function CompoundInterest() {
                 { header: "Total contributed", cell: (r) => formatCurrency(r.totalContributed) },
                 { header: "Total interest", cell: (r) => formatCurrency(r.totalInterest) },
                 { header: "Balance", cell: (r) => formatCurrency(r.balance) },
-                ...(hasInflation ? [{ header: "Today's dollars", cell: (r: CompoundResult["years"][number]) => formatCurrency(r.realBalance) }] : []),
+                ...(hasInflation
+                  ? [
+                      {
+                        header: "Today's dollars",
+                        cell: (r: CompoundResult["years"][number]) => formatCurrency(r.realBalance),
+                      },
+                    ]
+                  : []),
               ]}
               actions={
                 <ExportButton

@@ -40,7 +40,10 @@ export function cagrSeries(values: number[]): CagrSeriesResult {
     return {
       year: k,
       actual: v,
-      smooth: rate !== null && first !== undefined ? num(new D(first).times(new D(rate).plus(1).pow(k))) : v,
+      smooth:
+        rate !== null && first !== undefined
+          ? num(new D(first).times(new D(rate).plus(1).pow(k)))
+          : v,
       yearReturn,
     };
   });

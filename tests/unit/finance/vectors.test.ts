@@ -58,11 +58,20 @@ describe("§7 test vectors", () => {
 
   it("#4 loan total interest ≈ $231,676 (±$1), final balance exactly $0.00", () => {
     // Unrounded level payment × 360 − principal = $231,676.38.
-    const exactInterest = loanPaymentExact(200_000, 0.005, 360).times(360).minus(200_000).toNumber();
+    const exactInterest = loanPaymentExact(200_000, 0.005, 360)
+      .times(360)
+      .minus(200_000)
+      .toNumber();
     expect(Math.abs(exactInterest - 231_676)).toBeLessThanOrEqual(1);
     // The cent-rounded schedule ($1,199.10 × 359 + a $1,200.14 final payment that absorbs the
     // rounding drift) lands $0.66 above that: $231,677.04.
-    const r = amortize({ principal: 200_000, annualRate: 0.06, termMonths: 360, paymentsPerYear: 12, startDate: "2025-01-01" });
+    const r = amortize({
+      principal: 200_000,
+      annualRate: 0.06,
+      termMonths: 360,
+      paymentsPerYear: 12,
+      startDate: "2025-01-01",
+    });
     expect(r.totalInterest).toBeCloseTo(231_677.04, 2);
     expect(Math.abs(r.totalInterest - exactInterest)).toBeLessThanOrEqual(1);
     expect(r.rows.at(-1)?.payment).toBe(1_200.14);
@@ -71,7 +80,13 @@ describe("§7 test vectors", () => {
   });
 
   it("#5 zero-rate loan: $12,000, 0%, 12 months → $1,000/mo, $0 interest", () => {
-    const r = amortize({ principal: 12_000, annualRate: 0, termMonths: 12, paymentsPerYear: 12, startDate: "2025-01-01" });
+    const r = amortize({
+      principal: 12_000,
+      annualRate: 0,
+      termMonths: 12,
+      paymentsPerYear: 12,
+      startDate: "2025-01-01",
+    });
     expect(r.payment).toBe(1_000);
     expect(r.totalInterest).toBe(0);
     expect(r.rows.at(-1)?.balance).toBe(0);

@@ -1,6 +1,15 @@
 "use client";
 
-import { Area, AreaChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  Legend,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import { formatCurrency, formatCurrencyCompact } from "@/lib/format";
 import { ChartFrame } from "./ChartFrame";
 
@@ -28,11 +37,21 @@ export default function PayoffChart({
         <AreaChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
           <CartesianGrid strokeDasharray="3 3" vertical={false} />
           <XAxis dataKey="month" tickLine={false} axisLine={false} minTickGap={24} />
-          <YAxis tickFormatter={(v: number) => formatCurrencyCompact(v)} tickLine={false} axisLine={false} width={60} />
+          <YAxis
+            tickFormatter={(v: number) => formatCurrencyCompact(v)}
+            tickLine={false}
+            axisLine={false}
+            width={60}
+          />
           <Tooltip
             formatter={(value) => formatCurrency(Number(value))}
             labelFormatter={(label) => `Month ${String(label)}`}
-            contentStyle={{ background: "rgb(var(--surface))", border: "1px solid rgb(var(--border))", borderRadius: 8, color: "rgb(var(--ink))" }}
+            contentStyle={{
+              background: "rgb(var(--surface))",
+              border: "1px solid rgb(var(--border))",
+              borderRadius: 8,
+              color: "rgb(var(--ink))",
+            }}
           />
           <Legend wrapperStyle={{ fontSize: 13 }} />
           {debts.map((d, i) => (

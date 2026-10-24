@@ -30,7 +30,11 @@ export const FREQUENCY_OPTIONS: { value: Frequency; label: string }[] = [
  * Effective rate per contribution period for a nominal annual rate compounded `n` times a year,
  * when contributions happen `p` times a year: (1 + r/n)^(n/p) − 1, continuous: e^(r/p) − 1.
  */
-export function periodRate(annualRate: number, compounding: Compounding, periodsPerYear: number): Dec {
+export function periodRate(
+  annualRate: number,
+  compounding: Compounding,
+  periodsPerYear: number,
+): Dec {
   const r = new D(annualRate);
   if (r.isZero()) return new D(0);
   if (compounding === "continuous") return r.div(periodsPerYear).exp().minus(1);

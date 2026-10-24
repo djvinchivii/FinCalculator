@@ -3,14 +3,30 @@
 import { z } from "zod";
 import { mortgage, type MortgageResult } from "@/lib/finance";
 import { isoDate, money, numberText, percent } from "@/lib/schema";
-import { formatCurrency, formatDate, formatDuration, formatMonthYear, formatPercent } from "@/lib/format";
+import {
+  formatCurrency,
+  formatDate,
+  formatDuration,
+  formatMonthYear,
+  formatPercent,
+} from "@/lib/format";
 import { pctPhrase } from "@/lib/text";
 import { useCalculator } from "@/components/calculator/useCalculator";
 import { CalculatorPanels, InputGroup } from "@/components/calculator/CalculatorPanels";
 import { Alert, ResultSummary, type Stat } from "@/components/calculator/ResultSummary";
 import { ScheduleTable } from "@/components/calculator/ScheduleTable";
-import { CopyResultsButton, ExportButton, ShareButton } from "@/components/calculator/ActionButtons";
-import { DateField, MoneyField, NumberField, PercentField, ToggleField } from "@/components/ui/FormFields";
+import {
+  CopyResultsButton,
+  ExportButton,
+  ShareButton,
+} from "@/components/calculator/ActionButtons";
+import {
+  DateField,
+  MoneyField,
+  NumberField,
+  PercentField,
+  ToggleField,
+} from "@/components/ui/FormFields";
 import { AmortizationChart, BreakdownDonut } from "@/components/charts";
 import { localTodayISO, yearlyAmortization } from "./loan-shared";
 
@@ -20,7 +36,12 @@ const schema = z
     downMode: z.enum(["percent", "amount"]),
     downPayment: numberText({ min: 0 }),
     annualRate: percent(),
-    termYears: numberText({ min: 1, max: 50, integer: true, maxMessage: "Mortgage terms are capped at 50 years" }),
+    termYears: numberText({
+      min: 1,
+      max: 50,
+      integer: true,
+      maxMessage: "Mortgage terms are capped at 50 years",
+    }),
     taxMode: z.enum(["percent", "amount"]),
     propertyTax: numberText({ min: 0, optional: true }),
     insuranceAnnual: money({ optional: true }),
@@ -31,13 +52,25 @@ const schema = z
   })
   .superRefine((v, ctx) => {
     if (v.downMode === "percent" && v.downPayment > 100) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["downPayment"], message: "Down payment can’t exceed 100%" });
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["downPayment"],
+        message: "Down payment can’t exceed 100%",
+      });
     }
     if (v.downMode === "amount" && v.downPayment > v.homePrice) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["downPayment"], message: "Down payment can’t exceed the home price" });
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["downPayment"],
+        message: "Down payment can’t exceed the home price",
+      });
     }
     if (v.taxMode === "percent" && v.propertyTax > 20) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["propertyTax"], message: "Property tax rates are capped at 20%" });
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["propertyTax"],
+        message: "Property tax rates are capped at 20%",
+      });
     }
   });
 
@@ -64,10 +97,16 @@ const clientDefaults = (): Partial<Form> => ({ startDate: localTodayISO() });
 const compute = (v: Inputs): MortgageResult =>
   mortgage({
     homePrice: v.homePrice,
-    downPayment: { mode: v.downMode, value: v.downMode === "percent" ? v.downPayment / 100 : v.downPayment },
+    downPayment: {
+      mode: v.downMode,
+      value: v.downMode === "percent" ? v.downPayment / 100 : v.downPayment,
+    },
     annualRate: v.annualRate,
     termYears: v.termYears,
-    propertyTax: { mode: v.taxMode, value: v.taxMode === "percent" ? v.propertyTax / 100 : v.propertyTax },
+    propertyTax: {
+      mode: v.taxMode,
+      value: v.taxMode === "percent" ? v.propertyTax / 100 : v.propertyTax,
+    },
     insuranceAnnual: v.insuranceAnnual,
     hoaMonthly: v.hoaMonthly,
     pmiRate: v.pmiRate,
@@ -83,23 +122,45 @@ function summaryText(v: Inputs, r: MortgageResult): string {
 }
 
 export default function Mortgage() {
-  const { form, result, inputs, isStale, getShareUrl } = useCalculator(schema, defaults, compute, clientDefaults);
+  const { form, result, inputs, isStale, getShareUrl } = useCalculator(
+    schema,
+    defaults,
+    compute,
+    clientDefaults,
+  );
   const downMode = form.watch("downMode");
   const taxMode = form.watch("taxMode");
 
   const stats: Stat[] = result
     ? [
-        { label: "Loan amount", value: formatCurrency(result.loanAmount), hint: `${formatPercent(result.ltv, 1)} loan-to-value` },
+        {
+          label: "Loan amount",
+          value: formatCurrency(result.loanAmount),
+          hint: `${formatPercent(result.ltv, 1)} loan-to-value`,
+        },
         { label: "Total interest", value: formatCurrency(result.loan.totalInterest), tone: "bad" },
         { label: "Payoff date", value: formatMonthYear(result.loan.payoffDate) },
         result.pmiRequired
-          ? { label: "PMI drops off", value: formatMonthYear(result.pmiDropOffDate), hint: `after ${formatDuration(result.pmiMonths)} · ${formatCurrency(result.totalPmi, { cents: false })} total` }
+          ? {
+              label: "PMI drops off",
+              value: formatMonthYear(result.pmiDropOffDate),
+              hint: `after ${formatDuration(result.pmiMonths)} · ${formatCurrency(result.totalPmi, { cents: false })} total`,
+            }
           : { label: "PMI", value: "Not required", hint: "20%+ down payment", tone: "good" },
-        { label: "Total cost of ownership", value: formatCurrency(result.totalCostOfOwnership, { cents: false }), hint: "down payment + loan + tax, insurance, HOA, PMI" },
+        {
+          label: "Total cost of ownership",
+          value: formatCurrency(result.totalCostOfOwnership, { cents: false }),
+          hint: "down payment + loan + tax, insurance, HOA, PMI",
+        },
       ]
     : [];
   if (result?.loan.hasExtras) {
-    stats.push({ label: "Interest saved", value: formatCurrency(result.loan.interestSaved), tone: "good", hint: `${formatDuration(result.loan.paymentsSaved)} sooner` });
+    stats.push({
+      label: "Interest saved",
+      value: formatCurrency(result.loan.interestSaved),
+      tone: "good",
+      hint: `${formatDuration(result.loan.paymentsSaved)} sooner`,
+    });
   }
 
   return (
@@ -109,7 +170,11 @@ export default function Mortgage() {
       inputs={
         <>
           <InputGroup title="Home & loan">
-            <MoneyField name="homePrice" label="Home price" tooltip="The purchase price of the home." />
+            <MoneyField
+              name="homePrice"
+              label="Home price"
+              tooltip="The purchase price of the home."
+            />
             <div className="grid grid-cols-[1fr_auto] items-end gap-3">
               <NumberField
                 name="downPayment"
@@ -127,9 +192,25 @@ export default function Mortgage() {
                 ]}
               />
             </div>
-            <PercentField name="annualRate" label="Interest rate" slider={{ min: 0, max: 12, step: 0.05 }} tooltip="The mortgage's annual interest rate." />
-            <NumberField name="termYears" label="Loan term" suffix="years" grouping={false} allowDecimal={false} tooltip="Typically 15 or 30 years." />
-            <DateField name="startDate" label="Loan start date" hint="Your first payment is due one month later." />
+            <PercentField
+              name="annualRate"
+              label="Interest rate"
+              slider={{ min: 0, max: 12, step: 0.05 }}
+              tooltip="The mortgage's annual interest rate."
+            />
+            <NumberField
+              name="termYears"
+              label="Loan term"
+              suffix="years"
+              grouping={false}
+              allowDecimal={false}
+              tooltip="Typically 15 or 30 years."
+            />
+            <DateField
+              name="startDate"
+              label="Loan start date"
+              hint="Your first payment is due one month later."
+            />
           </InputGroup>
           <InputGroup title="Costs on top of the loan">
             <div className="grid grid-cols-[1fr_auto] items-end gap-3">
@@ -149,12 +230,28 @@ export default function Mortgage() {
                 ]}
               />
             </div>
-            <MoneyField name="insuranceAnnual" label="Homeowners insurance (annual)" tooltip="Yearly premium to insure the home against damage; lenders require it." />
-            <MoneyField name="hoaMonthly" label="HOA dues (monthly)" tooltip="Monthly homeowners-association fees, if your community has one." />
-            <PercentField name="pmiRate" label="PMI rate (annual)" tooltip="Private mortgage insurance, charged yearly as a % of the loan when you put down less than 20%. It's removed when your balance reaches 78% of the home's value." />
+            <MoneyField
+              name="insuranceAnnual"
+              label="Homeowners insurance (annual)"
+              tooltip="Yearly premium to insure the home against damage; lenders require it."
+            />
+            <MoneyField
+              name="hoaMonthly"
+              label="HOA dues (monthly)"
+              tooltip="Monthly homeowners-association fees, if your community has one."
+            />
+            <PercentField
+              name="pmiRate"
+              label="PMI rate (annual)"
+              tooltip="Private mortgage insurance, charged yearly as a % of the loan when you put down less than 20%. It's removed when your balance reaches 78% of the home's value."
+            />
           </InputGroup>
           <InputGroup title="Extra payments (optional)">
-            <MoneyField name="extraPerPayment" label="Extra principal each month" tooltip="Paying extra principal shortens the loan, saves interest and gets rid of PMI sooner." />
+            <MoneyField
+              name="extraPerPayment"
+              label="Extra principal each month"
+              tooltip="Paying extra principal shortens the loan, saves interest and gets rid of PMI sooner."
+            />
           </InputGroup>
         </>
       }
@@ -179,7 +276,9 @@ export default function Mortgage() {
                         `  Insurance: ${formatCurrency(result.monthly.insurance)}`,
                         `  HOA: ${formatCurrency(result.monthly.hoa)}`,
                         `  PMI: ${formatCurrency(result.monthly.pmi)}`,
-                        result.pmiRequired ? `PMI drops off: ${formatMonthYear(result.pmiDropOffDate)}` : "",
+                        result.pmiRequired
+                          ? `PMI drops off: ${formatMonthYear(result.pmiDropOffDate)}`
+                          : "",
                         `Total cost of ownership: ${formatCurrency(result.totalCostOfOwnership)}`,
                         getShareUrl(),
                       ]
@@ -190,20 +289,51 @@ export default function Mortgage() {
                 </>
               }
             />
-            {result.loanAmount === 0 && <Alert tone="info">With 100% down there’s no loan — only taxes, insurance and HOA remain.</Alert>}
+            {result.loanAmount === 0 && (
+              <Alert tone="info">
+                With 100% down there’s no loan — only taxes, insurance and HOA remain.
+              </Alert>
+            )}
             <BreakdownDonut
               title="Monthly payment breakdown"
               centerLabel="Per month"
               centerValue={formatCurrency(result.monthly.total, { cents: false })}
               slices={[
-                { key: "pi", label: "Principal & interest", value: result.monthly.principalAndInterest, color: "rgb(var(--chart-1))" },
-                { key: "tax", label: "Property tax", value: result.monthly.tax, color: "rgb(var(--chart-3))" },
-                { key: "ins", label: "Insurance", value: result.monthly.insurance, color: "rgb(var(--chart-2))" },
-                { key: "hoa", label: "HOA", value: result.monthly.hoa, color: "rgb(var(--chart-4))" },
-                { key: "pmi", label: "PMI", value: result.monthly.pmi, color: "rgb(var(--chart-5))" },
+                {
+                  key: "pi",
+                  label: "Principal & interest",
+                  value: result.monthly.principalAndInterest,
+                  color: "rgb(var(--chart-1))",
+                },
+                {
+                  key: "tax",
+                  label: "Property tax",
+                  value: result.monthly.tax,
+                  color: "rgb(var(--chart-3))",
+                },
+                {
+                  key: "ins",
+                  label: "Insurance",
+                  value: result.monthly.insurance,
+                  color: "rgb(var(--chart-2))",
+                },
+                {
+                  key: "hoa",
+                  label: "HOA",
+                  value: result.monthly.hoa,
+                  color: "rgb(var(--chart-4))",
+                },
+                {
+                  key: "pmi",
+                  label: "PMI",
+                  value: result.monthly.pmi,
+                  color: "rgb(var(--chart-5))",
+                },
               ]}
             />
-            {result.rows.length > 0 && <AmortizationChart data={yearlyAmortization(result.rows, 12, result.loanAmount)} />}
+            {result.rows.length > 0 && (
+              <AmortizationChart data={yearlyAmortization(result.rows, 12, result.loanAmount)} />
+            )}
             <ScheduleTable
               title="Monthly schedule"
               rows={result.rows}
@@ -215,7 +345,10 @@ export default function Mortgage() {
                 { header: "Principal", cell: (r) => formatCurrency(r.principal + r.extra) },
                 { header: "Interest", cell: (r) => formatCurrency(r.interest) },
                 { header: "PMI", cell: (r) => formatCurrency(r.pmi) },
-                { header: "Tax + ins. + HOA", cell: (r) => formatCurrency(r.tax + r.insurance + r.hoa) },
+                {
+                  header: "Tax + ins. + HOA",
+                  cell: (r) => formatCurrency(r.tax + r.insurance + r.hoa),
+                },
                 { header: "Total paid", cell: (r) => formatCurrency(r.totalOutflow) },
                 { header: "Balance", cell: (r) => formatCurrency(r.balance) },
               ]}

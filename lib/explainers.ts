@@ -7,7 +7,10 @@ import { marked } from "marked";
 export async function loadExplainer(slug: string): Promise<string | null> {
   if (!/^[a-z0-9-]+$/.test(slug)) return null;
   try {
-    const md = await fs.readFile(path.join(process.cwd(), "content", "explainers", `${slug}.md`), "utf8");
+    const md = await fs.readFile(
+      path.join(process.cwd(), "content", "explainers", `${slug}.md`),
+      "utf8",
+    );
     return await marked.parse(md, { gfm: true });
   } catch {
     return null;

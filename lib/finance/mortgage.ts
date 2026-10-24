@@ -57,7 +57,10 @@ export function resolveAmount(value: AmountOrPercent, base: number): number {
 }
 
 export function mortgage(input: MortgageInput): MortgageResult {
-  const downPaymentAmount = Math.min(resolveAmount(input.downPayment, input.homePrice), input.homePrice);
+  const downPaymentAmount = Math.min(
+    resolveAmount(input.downPayment, input.homePrice),
+    input.homePrice,
+  );
   const loanAmount = num(cents(new D(input.homePrice).minus(downPaymentAmount)));
   const ltv = input.homePrice > 0 ? loanAmount / input.homePrice : 0;
   const pmiRequired = ltv > 0.8 && input.pmiRate > 0;
@@ -99,7 +102,12 @@ export function mortgage(input: MortgageInput): MortgageResult {
       insurance: num(insuranceMonthly),
       hoa: num(hoa),
       totalOutflow: num(
-        new D(row.payment).plus(row.extra).plus(pmi).plus(taxMonthly).plus(insuranceMonthly).plus(hoa),
+        new D(row.payment)
+          .plus(row.extra)
+          .plus(pmi)
+          .plus(taxMonthly)
+          .plus(insuranceMonthly)
+          .plus(hoa),
       ),
     };
   });

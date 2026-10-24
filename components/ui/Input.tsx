@@ -4,7 +4,10 @@ import { forwardRef, useLayoutEffect, useRef } from "react";
 import { groupDigits } from "@/lib/format";
 import { controlClass } from "./Field";
 
-export interface NumberInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange" | "value" | "prefix"> {
+export interface NumberInputProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "onChange" | "value" | "prefix"
+> {
   value: string;
   onValueChange: (value: string) => void;
   prefix?: string;
@@ -33,7 +36,18 @@ function sanitize(raw: string, allowDecimal: boolean, allowNegative: boolean): s
 
 /** Text input for numbers: formats with commas while typing and keeps the caret in place. */
 export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(function NumberInput(
-  { value, onValueChange, prefix, suffix, grouping = true, allowDecimal = true, allowNegative = false, invalid, className = "", ...rest },
+  {
+    value,
+    onValueChange,
+    prefix,
+    suffix,
+    grouping = true,
+    allowDecimal = true,
+    allowNegative = false,
+    invalid,
+    className = "",
+    ...rest
+  },
   forwardedRef,
 ) {
   const innerRef = useRef<HTMLInputElement | null>(null);
@@ -65,7 +79,10 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(functi
   return (
     <div className="relative">
       {prefix && (
-        <span aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-ink-muted">
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-ink-muted"
+        >
           {prefix}
         </span>
       )}
@@ -86,7 +103,10 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(functi
         {...rest}
       />
       {suffix && (
-        <span aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm text-ink-muted">
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm text-ink-muted"
+        >
           {suffix}
         </span>
       )}

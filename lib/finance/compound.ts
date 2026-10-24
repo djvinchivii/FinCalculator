@@ -51,7 +51,12 @@ export function compoundClosedForm(
 }
 
 /** Closed-form future value of a level annuity: PMT·((1+i)^N − 1)/i, ×(1+i) for annuity due. */
-export function annuityFutureValue(payment: number, ratePerPeriod: Dec, periods: number, timing: Timing): number {
+export function annuityFutureValue(
+  payment: number,
+  ratePerPeriod: Dec,
+  periods: number,
+  timing: Timing,
+): number {
   const pmt = new D(payment);
   if (ratePerPeriod.isZero()) return num(pmt.times(periods));
   const growth = ratePerPeriod.plus(1).pow(periods);
@@ -92,9 +97,10 @@ export function simulateCompound(input: CompoundInput): CompoundResult {
     yearInterest = ZERO;
   };
 
+  let contribution = new D(input.contribution);
   for (let k = 0; k < totalPeriods; k++) {
-    const yearIndex = Math.floor(k / p);
-    const contribution = new D(input.contribution).times(growth.plus(1).pow(yearIndex));
+    // Contributions step up once per year by the growth rate.
+    if (k > 0 && k % p === 0) contribution = contribution.times(growth.plus(1));
 
     if (input.timing === "begin") {
       balance = balance.plus(contribution);

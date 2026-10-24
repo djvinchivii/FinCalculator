@@ -34,12 +34,19 @@ export function numberText(opts: NumberTextOptions = {}) {
     if (opts.min !== undefined && (opts.exclusiveMin ? n <= opts.min : n < opts.min)) {
       const message =
         opts.minMessage ??
-        (opts.min === 0 ? (opts.exclusiveMin ? "Must be more than 0" : "Can’t be negative") : `Must be at least ${fmt(opts.min)}`);
+        (opts.min === 0
+          ? opts.exclusiveMin
+            ? "Must be more than 0"
+            : "Can’t be negative"
+          : `Must be at least ${fmt(opts.min)}`);
       ctx.addIssue({ code: z.ZodIssueCode.custom, message });
       return z.NEVER;
     }
     if (opts.max !== undefined && n > opts.max) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, message: opts.maxMessage ?? `Must be ${fmt(opts.max)} or less` });
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: opts.maxMessage ?? `Must be ${fmt(opts.max)} or less`,
+      });
       return z.NEVER;
     }
     if (opts.integer && !Number.isInteger(n)) {
@@ -54,11 +61,18 @@ export const MAX_MONEY = 1_000_000_000_000;
 
 /** Dollar amount: 0 … $1 trillion. */
 export const money = (opts: NumberTextOptions = {}) =>
-  numberText({ min: 0, max: MAX_MONEY, maxMessage: "That’s more than $1 trillion — try a smaller amount", ...opts });
+  numberText({
+    min: 0,
+    max: MAX_MONEY,
+    maxMessage: "That’s more than $1 trillion — try a smaller amount",
+    ...opts,
+  });
 
 /** Percent text (e.g. "5") → decimal (0.05). Capped at 100%. */
 export const percent = (opts: NumberTextOptions = {}) =>
-  numberText({ min: 0, max: 100, maxMessage: "Rates are capped at 100%", ...opts }).transform((n) => n / 100);
+  numberText({ min: 0, max: 100, maxMessage: "Rates are capped at 100%", ...opts }).transform(
+    (n) => n / 100,
+  );
 
 /** Years: 0 … 100. */
 export const years = (opts: NumberTextOptions = {}) =>
@@ -70,7 +84,9 @@ export const isoDate = () =>
 export const compounding = () =>
   z
     .enum(["1", "2", "4", "12", "26", "52", "365", "continuous"])
-    .transform((v): Compounding => (v === "continuous" ? "continuous" : (Number(v) as Compounding)));
+    .transform((v): Compounding =>
+      v === "continuous" ? "continuous" : (Number(v) as Compounding),
+    );
 
 export const frequency = () =>
   z.enum(["1", "2", "4", "12", "26", "52"]).transform((v) => Number(v) as Frequency);

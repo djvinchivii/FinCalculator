@@ -34,7 +34,10 @@ export function formatCurrency(value: number, opts: { cents?: boolean } = {}): s
   const rounded = Math.round(v * 10 ** digits) / 10 ** digits;
   const safe = rounded === 0 ? 0 : rounded;
   if (Math.abs(safe) >= 1e15) {
-    const sci = new Intl.NumberFormat(LOCALE, { notation: "scientific", maximumFractionDigits: 2 }).format(safe);
+    const sci = new Intl.NumberFormat(LOCALE, {
+      notation: "scientific",
+      maximumFractionDigits: 2,
+    }).format(safe);
     return `${safe < 0 ? "−" : ""}$${sci.replace("-", "")}`;
   }
   return currencyFormatter(digits).format(safe);
@@ -62,7 +65,8 @@ export function formatPercent(value: number, digits = 2): string {
   const v = clean(value);
   if (v === null) return PLACEHOLDER;
   const pct = v * 100;
-  if (Math.abs(pct) >= 1e9) return `${new Intl.NumberFormat(LOCALE, { notation: "scientific", maximumFractionDigits: 2 }).format(pct)}%`;
+  if (Math.abs(pct) >= 1e9)
+    return `${new Intl.NumberFormat(LOCALE, { notation: "scientific", maximumFractionDigits: 2 }).format(pct)}%`;
   const rounded = Math.round(pct * 10 ** digits) / 10 ** digits;
   return `${new Intl.NumberFormat(LOCALE, { minimumFractionDigits: digits, maximumFractionDigits: digits }).format(rounded === 0 ? 0 : rounded)}%`;
 }
@@ -71,7 +75,9 @@ export function formatNumber(value: number, digits = 2): string {
   const v = clean(value);
   if (v === null) return PLACEHOLDER;
   const rounded = Math.round(v * 10 ** digits) / 10 ** digits;
-  return new Intl.NumberFormat(LOCALE, { maximumFractionDigits: digits }).format(rounded === 0 ? 0 : rounded);
+  return new Intl.NumberFormat(LOCALE, { maximumFractionDigits: digits }).format(
+    rounded === 0 ? 0 : rounded,
+  );
 }
 
 function plural(n: number, word: string): string {
@@ -94,7 +100,10 @@ export function formatDuration(months: number): string {
 export function formatYears(years: number, digits = 2): string {
   const v = clean(years);
   if (v === null) return PLACEHOLDER;
-  const text = new Intl.NumberFormat(LOCALE, { minimumFractionDigits: digits, maximumFractionDigits: digits }).format(v);
+  const text = new Intl.NumberFormat(LOCALE, {
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
+  }).format(v);
   return `${text} ${v === 1 ? "year" : "years"}`;
 }
 
@@ -103,7 +112,11 @@ export function formatMonthYear(iso: string | null | undefined): string {
   if (!iso) return PLACEHOLDER;
   const d = new Date(`${iso}T00:00:00Z`);
   if (Number.isNaN(d.getTime())) return PLACEHOLDER;
-  return new Intl.DateTimeFormat(LOCALE, { month: "short", year: "numeric", timeZone: "UTC" }).format(d);
+  return new Intl.DateTimeFormat(LOCALE, {
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(d);
 }
 
 /** ISO → "Feb 1, 2055". */
@@ -111,7 +124,12 @@ export function formatDate(iso: string | null | undefined): string {
   if (!iso) return PLACEHOLDER;
   const d = new Date(`${iso}T00:00:00Z`);
   if (Number.isNaN(d.getTime())) return PLACEHOLDER;
-  return new Intl.DateTimeFormat(LOCALE, { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }).format(d);
+  return new Intl.DateTimeFormat(LOCALE, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(d);
 }
 
 /** Formats a digit string with thousands separators while typing: "1234567.8" → "1,234,567.8". */

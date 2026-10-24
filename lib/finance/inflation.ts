@@ -25,10 +25,18 @@ export function inflationSeries(amount: number, inflation: number, years: number
   const rows: InflationRow[] = [];
   const whole = Math.max(0, Math.floor(years));
   for (let y = 0; y <= whole; y++) {
-    rows.push({ year: y, futureCost: futureCost(amount, inflation, y), purchasingPower: purchasingPower(amount, inflation, y) });
+    rows.push({
+      year: y,
+      futureCost: futureCost(amount, inflation, y),
+      purchasingPower: purchasingPower(amount, inflation, y),
+    });
   }
   if (years > whole) {
-    rows.push({ year: years, futureCost: futureCost(amount, inflation, years), purchasingPower: purchasingPower(amount, inflation, years) });
+    rows.push({
+      year: years,
+      futureCost: futureCost(amount, inflation, years),
+      purchasingPower: purchasingPower(amount, inflation, years),
+    });
   }
   return rows;
 }

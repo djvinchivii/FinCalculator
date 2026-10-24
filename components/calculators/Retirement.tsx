@@ -9,11 +9,16 @@ import { useCalculator } from "@/components/calculator/useCalculator";
 import { CalculatorPanels, InputGroup } from "@/components/calculator/CalculatorPanels";
 import { Alert, ResultSummary } from "@/components/calculator/ResultSummary";
 import { ScheduleTable } from "@/components/calculator/ScheduleTable";
-import { CopyResultsButton, ExportButton, ShareButton } from "@/components/calculator/ActionButtons";
+import {
+  CopyResultsButton,
+  ExportButton,
+  ShareButton,
+} from "@/components/calculator/ActionButtons";
 import { MoneyField, NumberField, PercentField } from "@/components/ui/FormFields";
 import { GrowthChart } from "@/components/charts";
 
-const age = (label: string) => numberText({ min: 0, max: 110, maxMessage: `${label} must be 110 or less` });
+const age = (label: string) =>
+  numberText({ min: 0, max: 110, maxMessage: `${label} must be 110 or less` });
 
 const schema = z
   .object({
@@ -25,14 +30,28 @@ const schema = z
     postReturn: percent({ max: 30, maxMessage: "Use a return of 30% or less" }),
     inflation: percent({ optional: true, max: 30, maxMessage: "Use inflation of 30% or less" }),
     annualSpending: money({ optional: true }),
-    withdrawalRate: percent({ exclusiveMin: true, min: 0, max: 20, minMessage: "Use a withdrawal rate above 0%", maxMessage: "Use a withdrawal rate of 20% or less" }),
+    withdrawalRate: percent({
+      exclusiveMin: true,
+      min: 0,
+      max: 20,
+      minMessage: "Use a withdrawal rate above 0%",
+      maxMessage: "Use a withdrawal rate of 20% or less",
+    }),
   })
   .superRefine((v, ctx) => {
     if (v.retirementAge < v.currentAge) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["retirementAge"], message: "Retirement age can’t be before your current age" });
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["retirementAge"],
+        message: "Retirement age can’t be before your current age",
+      });
     }
     if (v.retirementAge - v.currentAge > 100) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["retirementAge"], message: "Projections are capped at 100 years" });
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["retirementAge"],
+        message: "Projections are capped at 100 years",
+      });
     }
   });
 
@@ -54,7 +73,9 @@ const defaults: Form = {
 const compute = (v: Inputs): RetirementResult => projectRetirement(v);
 
 function lastsText(r: RetirementResult): string {
-  return r.depletionAge === null ? `past age ${HORIZON_AGE}` : `until age ${formatNumber(r.depletionAge, 1)}`;
+  return r.depletionAge === null
+    ? `past age ${HORIZON_AGE}`
+    : `until age ${formatNumber(r.depletionAge, 1)}`;
 }
 
 function summaryText(v: Inputs, r: RetirementResult): string {
@@ -79,19 +100,54 @@ export default function Retirement() {
           <InputGroup title="You today">
             <div className="grid grid-cols-2 gap-3">
               <NumberField name="currentAge" label="Current age" grouping={false} />
-              <NumberField name="retirementAge" label="Retirement age" grouping={false} tooltip="The age you plan to stop contributing and start withdrawing." />
+              <NumberField
+                name="retirementAge"
+                label="Retirement age"
+                grouping={false}
+                tooltip="The age you plan to stop contributing and start withdrawing."
+              />
             </div>
-            <MoneyField name="currentSavings" label="Current retirement savings" tooltip="Everything already invested for retirement (401(k), IRA, brokerage)." />
-            <MoneyField name="monthlyContribution" label="Monthly contribution" tooltip="How much you add each month until retirement." />
+            <MoneyField
+              name="currentSavings"
+              label="Current retirement savings"
+              tooltip="Everything already invested for retirement (401(k), IRA, brokerage)."
+            />
+            <MoneyField
+              name="monthlyContribution"
+              label="Monthly contribution"
+              tooltip="How much you add each month until retirement."
+            />
           </InputGroup>
           <InputGroup title="Assumptions">
-            <PercentField name="preReturn" label="Return before retirement" slider={{ min: 0, max: 12, step: 0.1 }} tooltip="Expected average yearly investment return while you're saving." />
-            <PercentField name="postReturn" label="Return during retirement" slider={{ min: 0, max: 10, step: 0.1 }} tooltip="Expected yearly return once retired — often lower, as portfolios get more conservative." />
-            <PercentField name="inflation" label="Inflation" tooltip="How fast prices rise each year. Used to show results in today's dollars and grow your spending." />
+            <PercentField
+              name="preReturn"
+              label="Return before retirement"
+              slider={{ min: 0, max: 12, step: 0.1 }}
+              tooltip="Expected average yearly investment return while you're saving."
+            />
+            <PercentField
+              name="postReturn"
+              label="Return during retirement"
+              slider={{ min: 0, max: 10, step: 0.1 }}
+              tooltip="Expected yearly return once retired — often lower, as portfolios get more conservative."
+            />
+            <PercentField
+              name="inflation"
+              label="Inflation"
+              tooltip="How fast prices rise each year. Used to show results in today's dollars and grow your spending."
+            />
           </InputGroup>
           <InputGroup title="Retirement spending">
-            <MoneyField name="annualSpending" label="Annual spending (today's dollars)" tooltip="What you'd want to spend each year in retirement, in today's money." />
-            <PercentField name="withdrawalRate" label="Safe withdrawal rate" tooltip="The share of your portfolio you withdraw in year one. 4% is a common rule of thumb from historical studies." />
+            <MoneyField
+              name="annualSpending"
+              label="Annual spending (today's dollars)"
+              tooltip="What you'd want to spend each year in retirement, in today's money."
+            />
+            <PercentField
+              name="withdrawalRate"
+              label="Safe withdrawal rate"
+              tooltip="The share of your portfolio you withdraw in year one. 4% is a common rule of thumb from historical studies."
+            />
           </InputGroup>
         </>
       }
@@ -104,11 +160,40 @@ export default function Retirement() {
               headline={formatCurrency(result.nestEgg, { cents: false })}
               summary={summaryText(inputs, result)}
               stats={[
-                { label: "In today's dollars", value: formatCurrency(result.nestEggReal, { cents: false }) },
-                { label: "FIRE number (today's $)", value: formatCurrency(result.fireNumber, { cents: false }), hint: `${formatCurrency(result.fireNumberAtRetirement, { cents: false })} in future dollars at ${inputs.retirementAge}` },
-                { label: "Age you hit FIRE", value: result.fireAge === null ? "Not by 100" : formatNumber(result.fireAge, 1), tone: result.onTrack ? "good" : "bad" },
-                { label: "Money lasts", value: result.depletionAge === null ? `Past ${HORIZON_AGE}` : `To age ${formatNumber(result.depletionAge, 1)}`, tone: result.depletionAge === null || result.depletionAge >= 90 ? "good" : "bad", hint: result.yearsLasting !== null ? `${formatNumber(result.yearsLasting, 1)} years of retirement` : undefined },
-                { label: "First-year withdrawal", value: formatCurrency(result.firstYearSpendingNominal, { cents: false }), hint: result.nestEgg > 0 ? `${formatPercent(result.firstYearSpendingNominal / result.nestEgg, 1)} of nest egg` : undefined },
+                {
+                  label: "In today's dollars",
+                  value: formatCurrency(result.nestEggReal, { cents: false }),
+                },
+                {
+                  label: "FIRE number (today's $)",
+                  value: formatCurrency(result.fireNumber, { cents: false }),
+                  hint: `${formatCurrency(result.fireNumberAtRetirement, { cents: false })} in future dollars at ${inputs.retirementAge}`,
+                },
+                {
+                  label: "Age you hit FIRE",
+                  value: result.fireAge === null ? "Not by 100" : formatNumber(result.fireAge, 1),
+                  tone: result.onTrack ? "good" : "bad",
+                },
+                {
+                  label: "Money lasts",
+                  value:
+                    result.depletionAge === null
+                      ? `Past ${HORIZON_AGE}`
+                      : `To age ${formatNumber(result.depletionAge, 1)}`,
+                  tone: result.depletionAge === null || result.depletionAge >= 90 ? "good" : "bad",
+                  hint:
+                    result.yearsLasting !== null
+                      ? `${formatNumber(result.yearsLasting, 1)} years of retirement`
+                      : undefined,
+                },
+                {
+                  label: "First-year withdrawal",
+                  value: formatCurrency(result.firstYearSpendingNominal, { cents: false }),
+                  hint:
+                    result.nestEgg > 0
+                      ? `${formatPercent(result.firstYearSpendingNominal / result.nestEgg, 1)} of nest egg`
+                      : undefined,
+                },
               ]}
               actions={
                 <>
@@ -129,7 +214,8 @@ export default function Retirement() {
             />
             {result.depletionAge !== null && result.depletionAge < 90 && (
               <Alert tone="warning">
-                Your savings run out at about age {formatNumber(result.depletionAge, 1)}. Consider saving more, retiring later, or spending less.
+                Your savings run out at about age {formatNumber(result.depletionAge, 1)}. Consider
+                saving more, retiring later, or spending less.
               </Alert>
             )}
             <GrowthChart
@@ -137,7 +223,18 @@ export default function Retirement() {
               variant="area"
               xKey="age"
               xLabel="Age"
-              data={[{ age: inputs.currentAge, balance: inputs.currentSavings, real: inputs.currentSavings }, ...result.rows.map((r) => ({ age: r.age, balance: r.balance, real: r.realBalance }))]}
+              data={[
+                {
+                  age: inputs.currentAge,
+                  balance: inputs.currentSavings,
+                  real: inputs.currentSavings,
+                },
+                ...result.rows.map((r) => ({
+                  age: r.age,
+                  balance: r.balance,
+                  real: r.realBalance,
+                })),
+              ]}
               series={[
                 { key: "balance", label: "Balance (future dollars)", color: "rgb(var(--chart-1))" },
                 { key: "real", label: "Balance (today's dollars)", color: "rgb(var(--chart-2))" },
@@ -149,12 +246,25 @@ export default function Retirement() {
               rowKey={(r) => `${r.age}-${r.phase}`}
               columns={[
                 { header: "Age", cell: (r) => formatNumber(r.age, 1), align: "left" },
-                { header: "Phase", cell: (r) => (r.phase === "saving" ? "Saving" : "Retired"), align: "left" },
-                { header: "Contributions", cell: (r) => formatCurrency(r.contributions, { cents: false }) },
-                { header: "Withdrawals", cell: (r) => formatCurrency(r.withdrawals, { cents: false }) },
+                {
+                  header: "Phase",
+                  cell: (r) => (r.phase === "saving" ? "Saving" : "Retired"),
+                  align: "left",
+                },
+                {
+                  header: "Contributions",
+                  cell: (r) => formatCurrency(r.contributions, { cents: false }),
+                },
+                {
+                  header: "Withdrawals",
+                  cell: (r) => formatCurrency(r.withdrawals, { cents: false }),
+                },
                 { header: "Growth", cell: (r) => formatCurrency(r.growth, { cents: false }) },
                 { header: "Balance", cell: (r) => formatCurrency(r.balance, { cents: false }) },
-                { header: "Today's dollars", cell: (r) => formatCurrency(r.realBalance, { cents: false }) },
+                {
+                  header: "Today's dollars",
+                  cell: (r) => formatCurrency(r.realBalance, { cents: false }),
+                },
               ]}
               actions={
                 <ExportButton

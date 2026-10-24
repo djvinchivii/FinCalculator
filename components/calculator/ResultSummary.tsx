@@ -27,7 +27,10 @@ export function ResultSummary({
     <div className="rounded-card border border-border bg-surface p-5 shadow-card sm:p-6">
       <div aria-live="polite" aria-atomic="true">
         <p className="text-sm font-medium text-ink-muted">{headlineLabel}</p>
-        <p data-testid={testId} className="mt-1 break-words font-display text-4xl font-bold tracking-tight text-brand tabular-nums sm:text-5xl">
+        <p
+          data-testid={testId}
+          className="mt-1 break-words font-display text-4xl font-bold tracking-tight text-brand tabular-nums sm:text-5xl"
+        >
           {headline}
         </p>
       </div>
@@ -54,7 +57,13 @@ export function ResultSummary({
   );
 }
 
-export function Alert({ tone = "warning", children }: { tone?: "warning" | "danger" | "info"; children: ReactNode }) {
+export function Alert({
+  tone = "warning",
+  children,
+}: {
+  tone?: "warning" | "danger" | "info";
+  children: ReactNode;
+}) {
   const cls =
     tone === "danger"
       ? "border-danger/40 bg-danger/10 text-ink"

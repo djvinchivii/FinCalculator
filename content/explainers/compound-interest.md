@@ -13,7 +13,7 @@ For a single deposit: **A = P × (1 + r/n)^(n × t)**
 
 With continuous compounding it becomes **A = P × e^(r × t)**.
 
-When you also add money regularly, this calculator simulates every contribution period one by one, using the effective rate per period `(1 + r/n)^(n/p) − 1` (where *p* is how often you contribute). That's what lets it handle contributions that grow each year or happen on a different schedule than compounding.
+When you also add money regularly, this calculator simulates every contribution period one by one, using the effective rate per period `(1 + r/n)^(n/p) − 1` (where _p_ is how often you contribute). That's what lets it handle contributions that grow each year or happen on a different schedule than compounding.
 
 ## Worked example
 

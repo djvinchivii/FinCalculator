@@ -1,6 +1,17 @@
 "use client";
 
-import { Area, AreaChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  Legend,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import { formatCurrency, formatCurrencyCompact } from "@/lib/format";
 import { ChartFrame } from "./ChartFrame";
 
@@ -46,12 +57,28 @@ export default function GrowthChart({
   const axes = (
     <>
       <CartesianGrid strokeDasharray="3 3" vertical={false} />
-      <XAxis dataKey={xKey} tickFormatter={formatX} tickLine={false} axisLine={false} minTickGap={24} />
-      <YAxis tickFormatter={(v: number) => formatAxis(v)} tickLine={false} axisLine={false} width={64} />
+      <XAxis
+        dataKey={xKey}
+        tickFormatter={formatX}
+        tickLine={false}
+        axisLine={false}
+        minTickGap={24}
+      />
+      <YAxis
+        tickFormatter={(v: number) => formatAxis(v)}
+        tickLine={false}
+        axisLine={false}
+        width={64}
+      />
       <Tooltip
         formatter={(value) => formatValue(Number(value))}
         labelFormatter={(label) => `${xLabel} ${formatX(label as string | number)}`}
-        contentStyle={{ background: "rgb(var(--surface))", border: "1px solid rgb(var(--border))", borderRadius: 8, color: "rgb(var(--ink))" }}
+        contentStyle={{
+          background: "rgb(var(--surface))",
+          border: "1px solid rgb(var(--border))",
+          borderRadius: 8,
+          color: "rgb(var(--ink))",
+        }}
       />
       <Legend wrapperStyle={{ fontSize: 13 }} />
     </>

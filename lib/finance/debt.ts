@@ -110,7 +110,10 @@ export function simulateDebtPayoff(input: DebtPayoffInput): DebtPayoffResult {
     };
   }
 
-  const totalFirstInterest = ordered.reduce((s, d) => s.plus(monthlyInterest(new D(d.balance), d.apr)), ZERO);
+  const totalFirstInterest = ordered.reduce(
+    (s, d) => s.plus(monthlyInterest(new D(d.balance), d.apr)),
+    ZERO,
+  );
   if (budget.lte(totalFirstInterest)) {
     return {
       ...empty,
@@ -196,7 +199,10 @@ export function simulateDebtPayoff(input: DebtPayoffInput): DebtPayoffResult {
     status: finished ? "ok" : "never",
     warnings: finished
       ? warnings
-      : [`Even after ${MAX_MONTHS / 12} years these debts aren't paid off. Increase your monthly budget.`, ...warnings],
+      : [
+          `Even after ${MAX_MONTHS / 12} years these debts aren't paid off. Increase your monthly budget.`,
+          ...warnings,
+        ],
     months: finished ? month : null,
     totalInterest: num(totalInterest),
     totalPaid: num(totalPaid),
@@ -221,6 +227,8 @@ export function compareStrategies(debts: Debt[], monthlyBudget: number): Strateg
     snowball,
     interestDifference: num(new D(snowball.totalInterest).minus(avalanche.totalInterest)),
     monthsDifference:
-      avalanche.months !== null && snowball.months !== null ? snowball.months - avalanche.months : null,
+      avalanche.months !== null && snowball.months !== null
+        ? snowball.months - avalanche.months
+        : null,
   };
 }

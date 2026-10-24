@@ -27,7 +27,9 @@ export function toYears(time: number, unit: TimeUnit, basis: DayCountBasis): num
 
 /** I = P·r·t, total = P + I. */
 export function simpleInterest(input: SimpleInterestInput): SimpleInterestResult {
-  const t = new D(input.time).div(input.unit === "days" ? input.basis : input.unit === "months" ? 12 : 1);
+  const t = new D(input.time).div(
+    input.unit === "days" ? input.basis : input.unit === "months" ? 12 : 1,
+  );
   const interest = new D(input.principal).times(input.rate).times(t);
   return {
     interest: num(interest),

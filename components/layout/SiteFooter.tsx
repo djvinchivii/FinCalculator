@@ -8,7 +8,8 @@ export function SiteFooter() {
           <strong className="text-ink">Disclaimer:</strong> {SITE.disclaimer}
         </p>
         <p>
-          © {new Date().getFullYear()} {SITE.name}. No accounts, no tracking — your inputs never leave your browser.
+          © {new Date().getFullYear()} {SITE.name}. No accounts, no tracking — your inputs never
+          leave your browser.
         </p>
       </div>
     </footer>

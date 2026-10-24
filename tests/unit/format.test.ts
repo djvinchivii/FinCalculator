@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { formatCurrency, formatDuration, formatPercent, groupDigits, parseNumber } from "@/lib/format";
+import {
+  formatCurrency,
+  formatDuration,
+  formatPercent,
+  groupDigits,
+  parseNumber,
+} from "@/lib/format";
 import { parseState, serializeState } from "@/lib/url-state";
 import { toCsv } from "@/lib/csv";
 
@@ -30,7 +36,14 @@ describe("format", () => {
 describe("url-state", () => {
   it("round-trips scalars and record arrays", () => {
     const defaults = { amount: "1000", on: false, debts: [{ name: "", balance: "" }] };
-    const state = { amount: "250,000", on: true, debts: [{ name: "Visa, gold", balance: "1200" }, { name: "Car", balance: "9000" }] };
+    const state = {
+      amount: "250,000",
+      on: true,
+      debts: [
+        { name: "Visa, gold", balance: "1200" },
+        { name: "Car", balance: "9000" },
+      ],
+    };
     const parsed = parseState(new URLSearchParams(serializeState(state)), defaults);
     expect(parsed).toEqual(state);
   });
@@ -42,10 +55,16 @@ describe("url-state", () => {
 
 describe("csv", () => {
   it("escapes commas, quotes and formula prefixes", () => {
-    const csv = toCsv([{ a: 'He said "hi", ok', b: 1.005 }, { a: "=SUM(A1)", b: -0 }], [
-      { header: "Text", value: (r) => r.a },
-      { header: "Num", value: (r) => r.b },
-    ]);
+    const csv = toCsv(
+      [
+        { a: 'He said "hi", ok', b: 1.005 },
+        { a: "=SUM(A1)", b: -0 },
+      ],
+      [
+        { header: "Text", value: (r) => r.a },
+        { header: "Num", value: (r) => r.b },
+      ],
+    );
     expect(csv).toBe('Text,Num\r\n"He said ""hi"", ok",1\r\n\'=SUM(A1),0\r\n');
   });
 });

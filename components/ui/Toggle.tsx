@@ -27,7 +27,9 @@ export function Toggle({
   const groupName = name ?? autoName;
   return (
     <fieldset className="space-y-1.5">
-      <legend className={hideLabel ? "sr-only" : "mb-1.5 text-sm font-medium text-ink"}>{label}</legend>
+      <legend className={hideLabel ? "sr-only" : "mb-1.5 text-sm font-medium text-ink"}>
+        {label}
+      </legend>
       <div className="flex flex-wrap gap-1 rounded-lg border border-border bg-surface-2 p-1">
         {options.map((o) => {
           const checked = o.value === value;

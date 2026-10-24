@@ -1,6 +1,6 @@
 ## What it is
 
-Inflation is the general rise in prices over time. It means a dollar buys less every year — so money sitting in cash quietly loses value, and investment returns must be judged *after* inflation.
+Inflation is the general rise in prices over time. It means a dollar buys less every year — so money sitting in cash quietly loses value, and investment returns must be judged _after_ inflation.
 
 ## The formula
 

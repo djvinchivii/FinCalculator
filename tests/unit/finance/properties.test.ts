@@ -33,7 +33,10 @@ describe("amortization properties", () => {
             startDate: "2025-01-15",
             extras: { perPayment: extra },
           });
-          const principalSum = r.rows.reduce((s, row) => s + Math.round((row.principal + row.extra) * 100), 0);
+          const principalSum = r.rows.reduce(
+            (s, row) => s + Math.round((row.principal + row.extra) * 100),
+            0,
+          );
           expect(principalSum).toBe(Math.round(principal * 100));
           let prev = principal;
           for (const row of r.rows) {
@@ -51,7 +54,15 @@ describe("amortization properties", () => {
 });
 
 describe("compound growth properties", () => {
-  const base = { principal: 1000, contribution: 100, contributionFrequency: 12 as Frequency, timing: "end" as const, annualRate: 0.05, compounding: 12 as Compounding, years: 10 };
+  const base = {
+    principal: 1000,
+    contribution: 100,
+    contributionFrequency: 12 as Frequency,
+    timing: "end" as const,
+    annualRate: 0.05,
+    compounding: 12 as Compounding,
+    years: 10,
+  };
   it("increases monotonically with rate, time and contribution", () => {
     fc.assert(
       fc.property(
@@ -62,11 +73,21 @@ describe("compound growth properties", () => {
         frequencyArb,
         (rate, years, contribution, compounding, freq) => {
           const at = (o: Partial<typeof base>) =>
-            simulateCompound({ ...base, compounding, contributionFrequency: freq, annualRate: rate, years, contribution, ...o }).futureBalance;
+            simulateCompound({
+              ...base,
+              compounding,
+              contributionFrequency: freq,
+              annualRate: rate,
+              years,
+              contribution,
+              ...o,
+            }).futureBalance;
           const v = at({});
           expect(at({ annualRate: rate + 0.01 })).toBeGreaterThan(v);
-          expect(at({ years: years + 1 })).toBeGreaterThan(v);
           expect(at({ contribution: contribution + 10 })).toBeGreaterThan(v);
+          // More time only helps when something is growing the balance (a rate or contributions).
+          if (rate > 0 || contribution > 0) expect(at({ years: years + 1 })).toBeGreaterThan(v);
+          else expect(at({ years: years + 1 })).toBe(v);
         },
       ),
       { numRuns: 80 },
@@ -74,7 +95,14 @@ describe("compound growth properties", () => {
   });
 
   it("matches the closed form for mismatched frequencies with no contributions", () => {
-    const r = simulateCompound({ ...base, contribution: 0, contributionFrequency: 4, compounding: 365, years: 7, principal: 5000 });
+    const r = simulateCompound({
+      ...base,
+      contribution: 0,
+      contributionFrequency: 4,
+      compounding: 365,
+      years: 7,
+      principal: 5000,
+    });
     expect(r.futureBalance).toBeCloseTo(5000 * (1 + 0.05 / 365) ** (365 * 7), 6);
   });
 });
@@ -91,7 +119,14 @@ describe("savings goal properties", () => {
         frequencyArb,
         fc.constantFrom("begin" as const, "end" as const),
         (target, current, rate, years, compounding, freq, timing) => {
-          const goal = { target, current, annualRate: rate, compounding, contributionFrequency: freq, timing };
+          const goal = {
+            target,
+            current,
+            annualRate: rate,
+            compounding,
+            contributionFrequency: freq,
+            timing,
+          };
           const s = solveContribution({ ...goal, years });
           const sim = simulateCompound({
             principal: current,
@@ -118,9 +153,25 @@ describe("savings goal properties", () => {
   });
 
   it("handles a zero rate", () => {
-    const s = solveContribution({ target: 12_000, current: 0, annualRate: 0, compounding: 12, contributionFrequency: 12, timing: "end", years: 1 });
+    const s = solveContribution({
+      target: 12_000,
+      current: 0,
+      annualRate: 0,
+      compounding: 12,
+      contributionFrequency: 12,
+      timing: "end",
+      years: 1,
+    });
     expect(s.contribution).toBe(1000);
-    const t = solveTime({ target: 12_000, current: 0, annualRate: 0, compounding: 12, contributionFrequency: 12, timing: "end", contribution: 1000 });
+    const t = solveTime({
+      target: 12_000,
+      current: 0,
+      annualRate: 0,
+      compounding: 12,
+      contributionFrequency: 12,
+      timing: "end",
+      contribution: 1000,
+    });
     expect(t.months).toBe(12);
   });
 });
@@ -133,21 +184,25 @@ describe("debt strategy properties", () => {
   });
   it("Avalanche total interest ≤ Snowball total interest", () => {
     fc.assert(
-      fc.property(fc.array(debtArb, { minLength: 1, maxLength: 6 }), fc.integer({ min: 0, max: 2000 }), (raw, extra) => {
-        const debts: Debt[] = raw.map((d, i) => ({
-          id: `d${i}`,
-          name: `Debt ${i}`,
-          balance: d.balance,
-          apr: d.aprBp / 10_000,
-          minPayment: Math.max(25, Math.round((d.balance * d.minPct) / 100)),
-        }));
-        const budget = debts.reduce((s, d) => s + d.minPayment, 0) + extra;
-        const c = compareStrategies(debts, budget);
-        if (c.avalanche.status === "ok" && c.snowball.status === "ok") {
-          // Allow a few cents of per-month rounding noise.
-          expect(c.avalanche.totalInterest).toBeLessThanOrEqual(c.snowball.totalInterest + 0.05);
-        }
-      }),
+      fc.property(
+        fc.array(debtArb, { minLength: 1, maxLength: 6 }),
+        fc.integer({ min: 0, max: 2000 }),
+        (raw, extra) => {
+          const debts: Debt[] = raw.map((d, i) => ({
+            id: `d${i}`,
+            name: `Debt ${i}`,
+            balance: d.balance,
+            apr: d.aprBp / 10_000,
+            minPayment: Math.max(25, Math.round((d.balance * d.minPct) / 100)),
+          }));
+          const budget = debts.reduce((s, d) => s + d.minPayment, 0) + extra;
+          const c = compareStrategies(debts, budget);
+          if (c.avalanche.status === "ok" && c.snowball.status === "ok") {
+            // Allow a few cents of per-month rounding noise.
+            expect(c.avalanche.totalInterest).toBeLessThanOrEqual(c.snowball.totalInterest + 0.05);
+          }
+        },
+      ),
       { numRuns: 150 },
     );
   });

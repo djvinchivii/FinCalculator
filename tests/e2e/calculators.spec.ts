@@ -129,7 +129,9 @@ test("debt payoff: #12 payment below interest is never paid off", async ({ page 
   await fill(page, "Minimum payment", "15");
   await fill(page, "Monthly budget for debt", "15");
   await expectHeadline(page, "Never paid off");
-  await expect(page.getByRole("alert").filter({ hasText: "never be paid off" }).first()).toBeVisible();
+  await expect(
+    page.getByRole("alert").filter({ hasText: "never be paid off" }).first(),
+  ).toBeVisible();
 });
 
 test("savings goal: zero-rate contribution", async ({ page }) => {

@@ -17,24 +17,57 @@ import {
 
 describe("compound", () => {
   it("annuity due is (1+i) × ordinary annuity", () => {
-    const common = { principal: 0, contribution: 100, contributionFrequency: 12 as const, annualRate: 0.06, compounding: 12 as const, years: 5 };
+    const common = {
+      principal: 0,
+      contribution: 100,
+      contributionFrequency: 12 as const,
+      annualRate: 0.06,
+      compounding: 12 as const,
+      years: 5,
+    };
     const end = simulateCompound({ ...common, timing: "end" }).futureBalance;
     const begin = simulateCompound({ ...common, timing: "begin" }).futureBalance;
     expect(begin).toBeCloseTo(end * 1.005, 6);
   });
   it("produces one row per year and an inflation-adjusted balance", () => {
-    const r = simulateCompound({ principal: 1000, contribution: 0, contributionFrequency: 12, timing: "end", annualRate: 0.05, compounding: 1, years: 3, inflation: 0.02 });
+    const r = simulateCompound({
+      principal: 1000,
+      contribution: 0,
+      contributionFrequency: 12,
+      timing: "end",
+      annualRate: 0.05,
+      compounding: 1,
+      years: 3,
+      inflation: 0.02,
+    });
     expect(r.years.map((y) => y.year)).toEqual([1, 2, 3]);
     expect(r.futureBalance).toBeCloseTo(1157.625, 6);
     expect(r.realBalance).toBeCloseTo(1157.625 / 1.02 ** 3, 6);
   });
   it("contribution growth raises contributions each year", () => {
-    const r = simulateCompound({ principal: 0, contribution: 100, contributionFrequency: 12, timing: "end", annualRate: 0, compounding: 12, years: 2, contributionGrowth: 0.1 });
+    const r = simulateCompound({
+      principal: 0,
+      contribution: 100,
+      contributionFrequency: 12,
+      timing: "end",
+      annualRate: 0,
+      compounding: 12,
+      years: 2,
+      contributionGrowth: 0.1,
+    });
     expect(r.years[0]?.contributions).toBeCloseTo(1200, 8);
     expect(r.years[1]?.contributions).toBeCloseTo(1320, 8);
   });
   it("handles zero years", () => {
-    const r = simulateCompound({ principal: 500, contribution: 50, contributionFrequency: 12, timing: "end", annualRate: 0.05, compounding: 12, years: 0 });
+    const r = simulateCompound({
+      principal: 500,
+      contribution: 50,
+      contributionFrequency: 12,
+      timing: "end",
+      annualRate: 0.05,
+      compounding: 12,
+      years: 0,
+    });
     expect(r.futureBalance).toBe(500);
     expect(r.years).toHaveLength(0);
   });
@@ -42,14 +75,26 @@ describe("compound", () => {
 
 describe("simple interest", () => {
   it("uses the day-count basis", () => {
-    expect(simpleInterest({ principal: 36_000, rate: 0.1, time: 90, unit: "days", basis: 360 }).interest).toBeCloseTo(900, 8);
-    expect(simpleInterest({ principal: 36_500, rate: 0.1, time: 90, unit: "days", basis: 365 }).interest).toBeCloseTo(900, 8);
-    expect(simpleInterest({ principal: 1000, rate: 0.12, time: 6, unit: "months", basis: 365 }).interest).toBeCloseTo(60, 8);
+    expect(
+      simpleInterest({ principal: 36_000, rate: 0.1, time: 90, unit: "days", basis: 360 }).interest,
+    ).toBeCloseTo(900, 8);
+    expect(
+      simpleInterest({ principal: 36_500, rate: 0.1, time: 90, unit: "days", basis: 365 }).interest,
+    ).toBeCloseTo(900, 8);
+    expect(
+      simpleInterest({ principal: 1000, rate: 0.12, time: 6, unit: "months", basis: 365 }).interest,
+    ).toBeCloseTo(60, 8);
   });
 });
 
 describe("loan extras", () => {
-  const base = { principal: 200_000, annualRate: 0.06, termMonths: 360, paymentsPerYear: 12 as const, startDate: "2025-01-01" };
+  const base = {
+    principal: 200_000,
+    annualRate: 0.06,
+    termMonths: 360,
+    paymentsPerYear: 12 as const,
+    startDate: "2025-01-01",
+  };
   it("extra monthly payments save interest and time", () => {
     const r = amortize({ ...base, extras: { perPayment: 200 } });
     expect(r.interestSaved).toBeGreaterThan(50_000);
@@ -64,7 +109,12 @@ describe("loan extras", () => {
   });
   it("yearly extra applies every 12th payment", () => {
     const r = amortize({ ...base, extras: { yearly: 1000 } });
-    expect(r.rows.filter((x) => x.extra > 0).slice(0, 2).map((x) => x.period)).toEqual([12, 24]);
+    expect(
+      r.rows
+        .filter((x) => x.extra > 0)
+        .slice(0, 2)
+        .map((x) => x.period),
+    ).toEqual([12, 24]);
   });
   it("first payment is one period after the start date", () => {
     const r = amortize(base);
@@ -75,8 +125,16 @@ describe("loan extras", () => {
 
 describe("dates", () => {
   it("clamps month ends", () => {
-    expect(addMonths(new Date(Date.UTC(2025, 0, 31)), 1).toISOString().slice(0, 10)).toBe("2025-02-28");
-    expect(paymentDate(new Date(Date.UTC(2025, 0, 1)), 1, 26).toISOString().slice(0, 10)).toBe("2025-01-15");
+    expect(
+      addMonths(new Date(Date.UTC(2025, 0, 31)), 1)
+        .toISOString()
+        .slice(0, 10),
+    ).toBe("2025-02-28");
+    expect(
+      paymentDate(new Date(Date.UTC(2025, 0, 1)), 1, 26)
+        .toISOString()
+        .slice(0, 10),
+    ).toBe("2025-01-15");
   });
 });
 
@@ -144,7 +202,9 @@ describe("debt payoff", () => {
     expect(r.order).toEqual(["a", "b", "c"]);
   });
   it("handles empty input", () => {
-    expect(simulateDebtPayoff({ debts: [], monthlyBudget: 100, strategy: "avalanche" }).status).toBe("empty");
+    expect(
+      simulateDebtPayoff({ debts: [], monthlyBudget: 100, strategy: "avalanche" }).status,
+    ).toBe("empty");
   });
 });
 
@@ -169,8 +229,15 @@ describe("retirement", () => {
   });
   it("detects running out of money", () => {
     const r = projectRetirement({
-      currentAge: 60, retirementAge: 60, currentSavings: 100_000, monthlyContribution: 0,
-      preReturn: 0, postReturn: 0, inflation: 0, annualSpending: 20_000, withdrawalRate: 0.04,
+      currentAge: 60,
+      retirementAge: 60,
+      currentSavings: 100_000,
+      monthlyContribution: 0,
+      preReturn: 0,
+      postReturn: 0,
+      inflation: 0,
+      annualSpending: 20_000,
+      withdrawalRate: 0.04,
     });
     expect(r.depletionAge).toBe(65);
     expect(r.yearsLasting).toBe(5);
@@ -190,10 +257,17 @@ describe("inflation, CAGR, budget", () => {
   it("50/30/20 split", () => {
     const b = budgetSplit({ monthlyIncome: 5000, needs: 0.5, wants: 0.3, savings: 0.2 });
     expect([b.needs, b.wants, b.savings, b.valid]).toEqual([2500, 1500, 1000, true]);
-    expect(budgetSplit({ monthlyIncome: 5000, needs: 0.5, wants: 0.3, savings: 0.3 }).valid).toBe(false);
+    expect(budgetSplit({ monthlyIncome: 5000, needs: 0.5, wants: 0.3, savings: 0.3 }).valid).toBe(
+      false,
+    );
   });
   it("emergency fund months to goal", () => {
-    expect(emergencyFund({ monthlyExpenses: 3000, months: 6, currentSavings: 2000, monthlySaving: 500 })).toEqual({ target: 18000, remaining: 16000, monthsToGoal: 32 });
-    expect(emergencyFund({ monthlyExpenses: 3000, months: 6, currentSavings: 0, monthlySaving: 0 }).monthsToGoal).toBeNull();
+    expect(
+      emergencyFund({ monthlyExpenses: 3000, months: 6, currentSavings: 2000, monthlySaving: 500 }),
+    ).toEqual({ target: 18000, remaining: 16000, monthsToGoal: 32 });
+    expect(
+      emergencyFund({ monthlyExpenses: 3000, months: 6, currentSavings: 0, monthlySaving: 0 })
+        .monthsToGoal,
+    ).toBeNull();
   });
 });

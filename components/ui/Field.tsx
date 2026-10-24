@@ -12,7 +12,15 @@ export interface FieldChromeProps {
 }
 
 /** Label + ⓘ tooltip + control + hint/error text, wired together for screen readers. */
-export function FieldChrome({ id, label, tooltip, hint, error, children, className = "" }: FieldChromeProps) {
+export function FieldChrome({
+  id,
+  label,
+  tooltip,
+  hint,
+  error,
+  children,
+  className = "",
+}: FieldChromeProps) {
   return (
     <div className={`space-y-1.5 ${className}`}>
       <div className="flex items-center gap-1">
