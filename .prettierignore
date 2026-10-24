@@ -1,5 +1,5 @@
 .next
-.next-e2e
+.next-dev
 out
 node_modules
 playwright-report

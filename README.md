@@ -32,6 +32,8 @@ npm run dev          # http://localhost:3000
 
 The first time you run the e2e tests, install a browser: `npx playwright install chromium`.
 
+`npm run dev` builds into `.next-dev` and production builds use `.next`, so you can run the tests or `npm run build` while the dev server is running. If the dev server ever shows a `Cannot find module './123.js'` error, stop it, delete `.next-dev`, and start it again.
+
 ## How it's built
 
 - **Next.js (App Router) + TypeScript (strict)**, statically exported.

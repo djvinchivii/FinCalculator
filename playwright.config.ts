@@ -16,7 +16,7 @@ export default defineConfig({
     { name: "mobile", use: { ...devices["Pixel 7"], viewport: { width: 375, height: 812 } } },
   ],
   webServer: {
-    command: `NEXT_DIST_DIR=.next-e2e npm run build && node scripts/serve-static.mjs .next-e2e ${PORT}`,
+    command: `npm run build && node scripts/serve-static.mjs out ${PORT}`,
     url: `http://localhost:${PORT}`,
     reuseExistingServer: !process.env.CI,
     timeout: 240_000,
