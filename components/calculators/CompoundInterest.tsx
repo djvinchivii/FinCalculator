@@ -1,6 +1,7 @@
 "use client";
 
 import { z } from "zod";
+import { define } from "@/lib/glossary";
 import {
   COMPOUNDING_OPTIONS,
   FREQUENCY_OPTIONS,
@@ -86,18 +87,18 @@ export default function CompoundInterest() {
             <MoneyField
               name="principal"
               label="Initial deposit"
-              tooltip="The lump sum you start with today."
+              tooltip="The money you're starting with today. Use 0 if you're starting from scratch."
             />
             <MoneyField
               name="contribution"
               label="Recurring contribution"
-              tooltip="The amount you add every contribution period. Leave blank for none."
+              tooltip="How much you'll add on a regular schedule, like $100 every month. Leave blank if you won't add any."
             />
             <SelectField
               name="contributionFrequency"
               label="Contribution frequency"
               options={toOptions(FREQUENCY_OPTIONS)}
-              tooltip="How often you add money. This can differ from how often interest compounds."
+              tooltip="How often you add money — for example monthly, or every paycheck (bi-weekly)."
             />
             <ToggleField
               name="timing"
@@ -106,7 +107,7 @@ export default function CompoundInterest() {
                 { value: "end", label: "End of period" },
                 { value: "begin", label: "Beginning" },
               ]}
-              tooltip="Deposits at the beginning of each period earn one extra period of interest (an 'annuity due')."
+              tooltip={define("contributionTiming")}
             />
           </InputGroup>
           <InputGroup title="Growth">
@@ -114,32 +115,33 @@ export default function CompoundInterest() {
               name="annualRate"
               label="Annual interest rate"
               slider={{ min: 0, max: 15, step: 0.1 }}
-              tooltip="The yearly rate before compounding (nominal APR)."
+              tooltip="How much your money grows each year, as a percentage. Type 7 for 7%."
+              hint="Not sure? Savings accounts pay about 0–5%. Stock index funds have averaged about 7–10% a year over the long run — but that's not guaranteed."
             />
             <SelectField
               name="compounding"
               label="Compounding frequency"
               options={toOptions(COMPOUNDING_OPTIONS)}
-              tooltip="How often earned interest is added to your balance so it starts earning interest too."
+              tooltip={`${define("compoundingFrequency")} If you're not sure, choose Monthly.`}
             />
             <NumberField
               name="years"
               label="Years"
               suffix="years"
               slider={{ min: 1, max: 50 }}
-              tooltip="How long the money stays invested."
+              tooltip="How many years you'll leave the money to grow."
             />
           </InputGroup>
           <InputGroup title="Optional">
             <PercentField
               name="contributionGrowth"
               label="Annual contribution increase"
-              tooltip="Raise your contribution by this percent each year, e.g. when you get a raise."
+              tooltip="Optional. If you'll save a bit more each year (say, when you get a raise), enter by how much — 3 means 3% more each year."
             />
             <PercentField
               name="inflation"
               label="Inflation rate"
-              tooltip="Used to show your future balance in today's dollars (what it can actually buy)."
+              tooltip="Optional. Prices rise over time, so future money buys less. Enter a rate (about 3% is typical) to see your balance in today's dollars."
             />
           </InputGroup>
         </>

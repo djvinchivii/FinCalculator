@@ -1,25 +1,37 @@
-## What it is
+## In plain English
 
-Turn a goal — a house deposit, a car, a wedding — into a concrete plan. Either find **how much to save** each period to hit your target by a deadline, or find **how long it takes** with the amount you can afford.
+Got something to save for — a car, a trip, a home, an emergency fund? This turns your goal into a plan. It can answer two questions:
 
-## The formula
+- **How much should I save each month** to reach my goal by a certain date?
+- **How long will it take** if I save a set amount each month?
 
-To solve for the payment, where **i** is the rate per contribution period and **N** the number of contributions:
+## When to use it
 
-**PMT = (FV − PV × (1 + i)^N) × i / ((1 + i)^N − 1)**
+- Planning for a big purchase
+- Building an emergency fund
+- Seeing how a better savings rate helps
 
-To solve for time:
+## Example
 
-**N = ln((FV × i + PMT) / (PV × i + PMT)) / ln(1 + i)**
+You want **$25,000** in **3 years**. You've already saved **$2,000**, and your savings account pays **4.5%**.
 
-- **FV** — your goal; **PV** — what you've saved already
-- If you deposit at the beginning of each period, PMT is divided (or multiplied) by (1 + i).
-- At a 0% rate these simplify to **PMT = (FV − PV) / N** and **N = (FV − PV) / PMT**.
+You'd need to save about **$590 a month**. You'd put in about $23,250 yourself, and interest would add the other $1,750 or so.
 
-## Worked example
+## Watch out for
 
-Goal $25,000 in 3 years, starting with $2,000, earning 4.5% compounded monthly: you need about **$590 a month**. You contribute about $23,250; interest supplies the remaining $1,750 or so.
+**Taking big risks with short-term money.** If you need the money within a few years, a high-yield savings account or CD is usually safer than the stock market. A market drop right before your deadline could wipe out years of saving.
 
-## A common mistake
+<details>
+<summary>The math (optional)</summary>
 
-**Putting short-term goals in risky investments.** If you need the money within a few years, a high-yield savings account or CDs are usually safer than stocks — a market dip right before your deadline can wipe out years of progress.
+How much to save each period:
+
+**PMT = (Goal − Saved × (1 + i)^N) × i ÷ ((1 + i)^N − 1)**
+
+How many periods it takes:
+
+**N = ln((Goal × i + PMT) ÷ (Saved × i + PMT)) ÷ ln(1 + i)**
+
+Here **i** is the interest rate per deposit period and **N** is the number of deposits. With a 0% rate these become simply (Goal − Saved) ÷ N and (Goal − Saved) ÷ PMT.
+
+</details>

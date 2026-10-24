@@ -1,6 +1,7 @@
 "use client";
 
 import { z } from "zod";
+import { define } from "@/lib/glossary";
 import { HORIZON_AGE, projectRetirement, type RetirementResult } from "@/lib/finance";
 import { money, numberText, percent } from "@/lib/schema";
 import { formatCurrency, formatNumber, formatPercent } from "@/lib/format";
@@ -104,18 +105,18 @@ export default function Retirement() {
                 name="retirementAge"
                 label="Retirement age"
                 grouping={false}
-                tooltip="The age you plan to stop contributing and start withdrawing."
+                tooltip="The age you'd like to stop working and start living off your savings."
               />
             </div>
             <MoneyField
               name="currentSavings"
               label="Current retirement savings"
-              tooltip="Everything already invested for retirement (401(k), IRA, brokerage)."
+              tooltip="Everything you've saved for retirement so far — 401(k), IRA and other investment accounts. Use 0 if you're just starting."
             />
             <MoneyField
               name="monthlyContribution"
               label="Monthly contribution"
-              tooltip="How much you add each month until retirement."
+              tooltip="How much goes into retirement savings each month. Include money your employer adds (an “employer match”)."
             />
           </InputGroup>
           <InputGroup title="Assumptions">
@@ -123,30 +124,31 @@ export default function Retirement() {
               name="preReturn"
               label="Return before retirement"
               slider={{ min: 0, max: 12, step: 0.1 }}
-              tooltip="Expected average yearly investment return while you're saving."
+              tooltip={define("returnRate")}
+              hint="Not sure? 7% is a common long-term estimate for a mostly-stock mix. It's not guaranteed."
             />
             <PercentField
               name="postReturn"
               label="Return during retirement"
               slider={{ min: 0, max: 10, step: 0.1 }}
-              tooltip="Expected yearly return once retired — often lower, as portfolios get more conservative."
+              tooltip="How much your savings grow each year after you retire. Often set a bit lower (like 5%) because retirees usually invest more cautiously."
             />
             <PercentField
               name="inflation"
               label="Inflation"
-              tooltip="How fast prices rise each year. Used to show results in today's dollars and grow your spending."
+              tooltip={`${define("inflation")} About 3% is a common long-term estimate.`}
             />
           </InputGroup>
           <InputGroup title="Retirement spending">
             <MoneyField
               name="annualSpending"
               label="Annual spending (today's dollars)"
-              tooltip="What you'd want to spend each year in retirement, in today's money."
+              tooltip="How much you'd want to spend each year in retirement, in today's prices. Many people plan for 70–80% of what they spend now."
             />
             <PercentField
               name="withdrawalRate"
               label="Safe withdrawal rate"
-              tooltip="The share of your portfolio you withdraw in year one. 4% is a common rule of thumb from historical studies."
+              tooltip={define("withdrawalRate")}
             />
           </InputGroup>
         </>

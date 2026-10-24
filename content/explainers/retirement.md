@@ -1,20 +1,34 @@
-## What it is
+## In plain English
 
-This projects your retirement savings in two phases: **saving** (contributions plus growth until you retire) and **spending** (inflation-adjusted withdrawals while the rest stays invested). It also shows your **FIRE number** — the portfolio size at which work becomes optional.
+Retirement planning comes down to two phases:
 
-## The formula
+1. **Saving years** — you add money and it grows.
+2. **Retirement years** — you take money out to live on, while the rest keeps growing.
 
-- **FIRE number = annual spending ÷ withdrawal rate.** At a 4% withdrawal rate that's 25× your yearly spending.
-- Growth is applied monthly using `(1 + annual return)^(1/12) − 1`.
-- Everything is shown in **nominal** dollars (what your statement will say) and **today's dollars**: `nominal ÷ (1 + inflation)^years`.
-- In retirement, your spending rises with inflation every year; the simulation runs until the money runs out or you turn 120.
+This calculator estimates how much you'll have when you retire and how long it could last. It also shows your **FIRE number**: roughly how much you'd need to live off your savings without working.
 
-## Worked example
+## When to use it
 
-Spending $50,000 a year at a 4% withdrawal rate → FIRE number **$1,250,000** (today's dollars).
+- Checking whether you're on track
+- Seeing what changes if you save more or retire later
+- Finding your FIRE number
 
-Saving $1,000 a month from 30 with $50,000 already invested at 7% gets you to about $1.55 million at 60 — around $640,000 in today's dollars. That's short of the FIRE number, so the money runs out around age 75 unless you save more, retire later or spend less.
+## Example
 
-## A common mistake
+Say you want to spend **$50,000 a year**. Using the common **4% rule**, your FIRE number is $50,000 ÷ 0.04 = **$1,250,000**. That's 25 times your yearly spending.
 
-**Forgetting inflation.** A million dollars in 30 years buys what about $410,000 buys today at 3% inflation. Always compare your goal and your projection in the same kind of dollars.
+If you're 30, have $50,000 saved, and save $1,000 a month at 7%, you'd have about **$1.55 million** at 60. That sounds like plenty — but with prices rising about 3% a year, it would only buy what about **$640,000** buys today. At that level, the money would run out around age 75. Saving more, retiring a little later or spending less would close the gap.
+
+## Watch out for
+
+**Forgetting about inflation.** A million dollars 30 years from now won't buy what a million buys today. That's why the calculator shows results in **today's dollars** too — compare your goal and your projection in the same kind of dollars.
+
+<details>
+<summary>The math (optional)</summary>
+
+- **FIRE number = yearly spending ÷ withdrawal rate** (at 4%, that's 25 × spending)
+- Growth is added monthly at `(1 + yearly return)^(1/12) − 1`.
+- **Today's dollars = future dollars ÷ (1 + inflation)^years**
+- In retirement, your spending goes up with inflation each year, and the calculator keeps going until the money runs out or you reach age 120.
+
+</details>

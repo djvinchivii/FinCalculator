@@ -1,6 +1,7 @@
 "use client";
 
 import { z } from "zod";
+import { define } from "@/lib/glossary";
 import {
   COMPOUNDING_OPTIONS,
   aprToApy,
@@ -95,17 +96,13 @@ export default function RateTools() {
                   : "APY (effective annual yield)"
               }
               slider={{ min: 0, max: 30, step: 0.05 }}
-              tooltip={
-                direction === "apr-to-apy"
-                  ? "APR is the stated yearly rate before compounding is taken into account."
-                  : "APY is what you actually earn or pay in a year once compounding is included."
-              }
+              tooltip={direction === "apr-to-apy" ? define("apr") : define("apy")}
             />
             <SelectField
               name="compounding"
               label="Compounding frequency"
               options={toOptions(COMPOUNDING_OPTIONS)}
-              tooltip="How often interest is added to the balance; more often means a higher APY for the same APR."
+              tooltip={`${define("compoundingFrequency")} Monthly is the most common.`}
             />
           </InputGroup>
           <InputGroup title="Rule of 72">
@@ -113,7 +110,7 @@ export default function RateTools() {
               name="doublingRate"
               label="Annual return"
               slider={{ min: 1, max: 30, step: 0.5 }}
-              tooltip="The yearly growth rate (compounded annually) used to estimate doubling time."
+              tooltip="Any yearly growth rate — for example, your savings account's APY or an expected investment return."
             />
           </InputGroup>
         </>

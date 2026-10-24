@@ -12,7 +12,7 @@ Say you're adding a "Car Lease" calculator at `/calculators/car-lease`.
 
 1. **Math.** Create `lib/finance/lease.ts` with pure input → result functions, export it from `lib/finance/index.ts`, and add tests in `tests/unit/finance/`.
 
-2. **Register it.** Add an entry to `CALCULATORS` in `lib/calculators.ts` (slug, title, short blurb, description, group, icon), then add the slug to the right group's `slugs` array in `GROUPS` to place it on the hub.
+2. **Register it.** Add an entry to `CALCULATORS` in `lib/calculators.ts`: slug, title, icon, group, and the beginner-facing copy — the everyday `question` it answers, a `short` card line, a two-sentence `description`, three `steps` and a `needs` list (what to have handy and where to find it). Then add the slug to the right group's `slugs` array in `GROUPS` to place it on the hub and in the guide.
 
 3. **Build the component.** Create `components/calculators/CarLease.tsx`, using an existing calculator such as `SimpleInterest.tsx` as a template:
 
@@ -57,11 +57,20 @@ Say you're adding a "Car Lease" calculator at `/calculators/car-lease`.
 
 4. **Wire the route.** Add `"car-lease": dynamic(() => import("./CarLease"))` to `components/calculators/registry.ts`. The `[slug]` page and static export pick it up automatically.
 
-5. **Explainer.** Add `content/explainers/car-lease.md` with four sections: _What it is_, _The formula_, _Worked example_ (check the numbers against your function) and _A common mistake_.
+5. **Explainer.** Add `content/explainers/car-lease.md` following _Writing for beginners_ below (check the example numbers against your function).
 
 6. **Smoke test.** Add a case to `tests/e2e/calculators.spec.ts` that types a known input and asserts the `headline` text, and add the slug to `PAGES` in `tests/e2e/a11y.spec.ts` and `SLUGS` in `tests/e2e/fuzz.spec.ts`.
 
 `tests/unit/registry.test.ts` fails if a calculator is missing its hub group, component or explainer.
+
+## Writing for beginners
+
+Many readers are learning money basics, so:
+
+- Lead with the plain question, then the term ("How much will my money grow?" before "compound interest").
+- Tooltips are one sentence with no other jargon. For shared terms, use `define("apr")` from `lib/glossary.ts` — and add new terms there so they also appear in the guide's glossary.
+- Every rate field gets a `hint` saying where to find the number or what's typical.
+- Explainers use the sections _In plain English_, _When to use it_, _Example_, _Watch out for_, with formulas inside a `<details><summary>The math (optional)</summary>` block.
 
 ## UI checklist
 

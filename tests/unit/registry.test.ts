@@ -23,4 +23,12 @@ describe("calculator registry", () => {
       expect(registry, c.slug).toMatch(new RegExp(`["']?${c.slug}["']?:\\s*dynamic`));
     }
   });
+
+  it("every calculator has a plain-language question, three steps and what you'll need", () => {
+    for (const c of CALCULATORS) {
+      expect(c.question.endsWith("?"), c.slug).toBe(true);
+      expect(c.steps, c.slug).toHaveLength(3);
+      expect(c.needs.length, c.slug).toBeGreaterThan(0);
+    }
+  });
 });

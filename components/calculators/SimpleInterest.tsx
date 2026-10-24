@@ -1,6 +1,7 @@
 "use client";
 
 import { z } from "zod";
+import { define } from "@/lib/glossary";
 import { simpleInterest, type SimpleInterestResult } from "@/lib/finance";
 import { money, numberText, percent } from "@/lib/schema";
 import { formatCurrency, formatNumber } from "@/lib/format";
@@ -58,21 +59,18 @@ export default function SimpleInterest() {
       isStale={isStale}
       inputs={
         <InputGroup>
-          <MoneyField
-            name="principal"
-            label="Principal"
-            tooltip="The original amount borrowed or invested."
-          />
+          <MoneyField name="principal" label="Principal" tooltip={define("principal")} />
           <PercentField
             name="rate"
             label="Annual interest rate"
             slider={{ min: 0, max: 30, step: 0.1 }}
-            tooltip="The yearly percentage charged or earned on the principal."
+            tooltip="The yearly interest rate, as a percentage. Type 5 for 5%."
+            hint="You'll find it on your loan or savings agreement."
           />
           <NumberField
             name="time"
             label="Time"
-            tooltip="How long the money is borrowed or invested."
+            tooltip="How long the money is borrowed or saved. Pick days, months or years below."
           />
           <ToggleField
             name="unit"
@@ -91,7 +89,7 @@ export default function SimpleInterest() {
                 { value: "365", label: "365 days (actual/365)" },
                 { value: "360", label: "360 days (banker's year)" },
               ]}
-              tooltip="Some lenders divide by 360 instead of 365, which slightly increases the interest charged."
+              tooltip={`${define("dayCount")} If you're not sure, use 365.`}
             />
           )}
         </InputGroup>

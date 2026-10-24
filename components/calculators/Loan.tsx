@@ -1,6 +1,7 @@
 "use client";
 
 import { z } from "zod";
+import { define } from "@/lib/glossary";
 import {
   PAYMENT_FREQUENCY_OPTIONS,
   amortize,
@@ -143,20 +144,17 @@ export default function Loan() {
             <MoneyField
               name="principal"
               label="Loan amount"
-              tooltip="How much you're borrowing (the principal)."
+              tooltip="How much you're borrowing, not counting interest."
             />
             <PercentField
               name="annualRate"
               label="Annual interest rate"
               slider={{ min: 0, max: 25, step: 0.05 }}
-              tooltip="The yearly rate the lender charges (APR), before it's split into per-payment interest."
+              tooltip={`${define("apr")} Type 6 for 6%.`}
+              hint="Find it on your loan offer or statement. Car loans are often about 5–12%; personal loans can be much higher."
             />
             <div className="grid grid-cols-[1fr_auto] items-end gap-3">
-              <NumberField
-                name="term"
-                label="Loan term"
-                tooltip="How long you have to repay the loan."
-              />
+              <NumberField name="term" label="Loan term" tooltip={define("term")} />
               <ToggleField
                 name="termUnit"
                 label="Term unit"
@@ -170,30 +168,30 @@ export default function Loan() {
               name="paymentsPerYear"
               label="Payment frequency"
               options={toOptions(PAYMENT_FREQUENCY_OPTIONS)}
-              tooltip="How often you make a payment. The annual rate is divided by the number of payments per year."
+              tooltip="How often you make a payment. Most loans are paid monthly."
             />
             <DateField
               name="startDate"
               label="Loan start date"
               hint="Your first payment is due one period after this date."
-              tooltip="The date the loan is funded; it sets your payoff date."
+              tooltip="When the loan begins. We use it to work out your payoff date."
             />
           </InputGroup>
           <InputGroup title="Extra payments (optional)">
             <MoneyField
               name="extraPerPayment"
               label="Extra with every payment"
-              tooltip="Extra principal added to each regular payment. Even small amounts cut interest a lot."
+              tooltip={`${define("extraPayment")} Even $25 makes a difference.`}
             />
             <MoneyField
               name="extraYearly"
               label="Extra once a year"
-              tooltip="An additional principal payment each year, e.g. from a tax refund or bonus."
+              tooltip="An extra payment once a year — for example from a tax refund or bonus. It goes straight to what you owe."
             />
             <MoneyField
               name="extraOneTime"
               label="One-time extra payment"
-              tooltip="A single lump sum toward principal."
+              tooltip="A single extra lump sum, like a gift or bonus, paid toward what you owe."
             />
             <DateField
               name="extraOneTimeDate"

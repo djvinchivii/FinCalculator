@@ -41,7 +41,7 @@ The first time you run the e2e tests, install a browser: `npx playwright install
 - **Recharts** for charts, loaded lazily when a chart scrolls into view.
 
 ```
-app/                         routes: hub page and /calculators/[slug]
+app/                         routes: hub page, /guide and /calculators/[slug]
 components/
   ui/                        Input, Select, Toggle, Slider, Card, Tabs, Tooltip, form-bound fields
   calculator/                CalculatorShell, panels, ResultSummary, ScheduleTable, Share/Copy/Export, Explainer, useCalculator
@@ -53,7 +53,8 @@ lib/
   url-state.ts               inputs ⇄ query string
   csv.ts                     schedule → CSV (Excel/Sheets-friendly)
   schema.ts                  zod helpers that turn field text into validated numbers
-  calculators.ts             calculator registry (titles, groups, hub order)
+  calculators.ts             calculator registry (titles, plain-language questions, how-to steps, groups, hub order)
+  glossary.ts                plain-English definitions used by ⓘ tooltips and the guide's glossary
   site.ts                    site name, tagline and disclaimer
 content/explainers/          one Markdown "What this means" explainer per calculator
 tests/unit, tests/e2e        Vitest and Playwright suites

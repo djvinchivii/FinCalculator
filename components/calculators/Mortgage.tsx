@@ -1,6 +1,7 @@
 "use client";
 
 import { z } from "zod";
+import { define } from "@/lib/glossary";
 import { mortgage, type MortgageResult } from "@/lib/finance";
 import { isoDate, money, numberText, percent } from "@/lib/schema";
 import {
@@ -173,7 +174,7 @@ export default function Mortgage() {
             <MoneyField
               name="homePrice"
               label="Home price"
-              tooltip="The purchase price of the home."
+              tooltip="What you'll pay for the home."
             />
             <div className="grid grid-cols-[1fr_auto] items-end gap-3">
               <NumberField
@@ -181,7 +182,7 @@ export default function Mortgage() {
                 label="Down payment"
                 prefix={downMode === "amount" ? "$" : undefined}
                 suffix={downMode === "percent" ? "%" : undefined}
-                tooltip="Cash you pay upfront. Below 20% usually means paying PMI."
+                tooltip={`${define("downPayment")} Under 20% usually means paying PMI.`}
               />
               <ToggleField
                 name="downMode"
@@ -196,7 +197,8 @@ export default function Mortgage() {
               name="annualRate"
               label="Interest rate"
               slider={{ min: 0, max: 12, step: 0.05 }}
-              tooltip="The mortgage's annual interest rate."
+              tooltip="The mortgage's yearly interest rate. Type 6.5 for 6.5%."
+              hint="Get a quote from a lender or check a mortgage-rate website."
             />
             <NumberField
               name="termYears"
@@ -204,7 +206,7 @@ export default function Mortgage() {
               suffix="years"
               grouping={false}
               allowDecimal={false}
-              tooltip="Typically 15 or 30 years."
+              tooltip="How many years you'll take to pay off the home. 30 years is most common; 15 years means bigger payments but far less interest."
             />
             <DateField
               name="startDate"
@@ -219,7 +221,7 @@ export default function Mortgage() {
                 label="Property tax (annual)"
                 prefix={taxMode === "amount" ? "$" : undefined}
                 suffix={taxMode === "percent" ? "%" : undefined}
-                tooltip="Yearly tax charged by your local government, as a % of the home's value or a dollar amount."
+                tooltip={`${define("propertyTax")} Enter it as a % of the price (often about 0.5%–2%) or as a yearly dollar amount.`}
               />
               <ToggleField
                 name="taxMode"
@@ -233,24 +235,24 @@ export default function Mortgage() {
             <MoneyField
               name="insuranceAnnual"
               label="Homeowners insurance (annual)"
-              tooltip="Yearly premium to insure the home against damage; lenders require it."
+              tooltip={`${define("homeInsurance")} About $1,000–$3,000 a year is common.`}
             />
             <MoneyField
               name="hoaMonthly"
               label="HOA dues (monthly)"
-              tooltip="Monthly homeowners-association fees, if your community has one."
+              tooltip={`${define("hoa")} Use 0 if there isn't one.`}
             />
             <PercentField
               name="pmiRate"
               label="PMI rate (annual)"
-              tooltip="Private mortgage insurance, charged yearly as a % of the loan when you put down less than 20%. It's removed when your balance reaches 78% of the home's value."
+              tooltip={`${define("pmi")} Usually about 0.3%–1.5% of the loan per year.`}
             />
           </InputGroup>
           <InputGroup title="Extra payments (optional)">
             <MoneyField
               name="extraPerPayment"
               label="Extra principal each month"
-              tooltip="Paying extra principal shortens the loan, saves interest and gets rid of PMI sooner."
+              tooltip="Paying a little extra each month toward what you owe saves interest, finishes the loan sooner and removes PMI earlier."
             />
           </InputGroup>
         </>

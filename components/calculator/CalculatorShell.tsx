@@ -4,6 +4,7 @@ import type { CalculatorMeta } from "@/lib/calculators";
 import { GROUPS } from "@/lib/calculators";
 import { SITE } from "@/lib/site";
 import { Explainer } from "./Explainer";
+import { HowToUse } from "./HowToUse";
 
 /** Page frame for every calculator: breadcrumb, title, the calculator, explainer and disclaimer. */
 export function CalculatorShell({
@@ -34,8 +35,13 @@ export function CalculatorShell({
           <span aria-hidden="true">{meta.icon}</span>
           {meta.title}
         </h1>
+        <p className="max-w-3xl text-xl font-semibold text-brand-strong dark:text-brand">
+          {meta.question}
+        </p>
         <p className="max-w-3xl text-ink-muted">{meta.description}</p>
       </header>
+
+      <HowToUse meta={meta} />
 
       {children}
 

@@ -108,6 +108,15 @@
   .prose-explainer pre code {
     @apply bg-transparent p-0;
   }
+  .prose-explainer details {
+    @apply mt-8 rounded-lg border border-border bg-surface-2/60 px-4 py-3;
+  }
+  .prose-explainer summary {
+    @apply cursor-pointer rounded font-semibold text-ink;
+  }
+  .prose-explainer details[open] summary {
+    @apply mb-2;
+  }
   .prose-explainer blockquote {
     @apply my-4 border-l-4 border-brand pl-4 italic text-ink-muted;
   }

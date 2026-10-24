@@ -1,25 +1,42 @@
-## What it is
+## In plain English
 
-Your mortgage payment is more than principal and interest. Most lenders also collect **property tax** and **homeowners insurance** each month (held in escrow), and you may pay **HOA dues** and **PMI** — private mortgage insurance that protects the lender when your down payment is under 20%.
+When you buy a home, your monthly payment usually includes more than the loan:
 
-## The formula
+- **Principal & interest** — paying back the loan
+- **Property tax** — charged by your local government
+- **Homeowners insurance** — required by the lender
+- **HOA dues** — if your neighborhood or building has them
+- **PMI** — an extra fee if you put down less than 20%
 
-**Monthly payment = P&I + tax ÷ 12 + insurance ÷ 12 + HOA + PMI**
+This calculator adds them all up so you know the real monthly cost.
 
-- **P&I** uses the loan formula: `M = P × r / (1 − (1 + r)^−n)` with r = annual rate ÷ 12.
-- **PMI** = loan amount × PMI rate ÷ 12, charged while the loan-to-value (LTV) ratio is above 80%. This calculator removes it automatically once your balance reaches **78% of the original home value** — the point where U.S. lenders must cancel it.
+## When to use it
 
-## Worked example
+- Working out how much home you can afford
+- Comparing different down payments or interest rates
+- Finding out when PMI will go away
 
-$400,000 home, 10% down ($40,000), 6.5% for 30 years:
+## Example
 
-- Loan: $360,000 → P&I **$2,275.44**
-- Property tax 1.2% → $400.00
-- Insurance $1,500/yr → $125.00
-- PMI 0.5% → $150.00
+A **$400,000** home with **10% down** ($40,000) at **6.5%** for 30 years:
 
-Total: about **$2,950** a month. PMI drops off after roughly 9 years, once the balance falls to $312,000.
+- Loan payment: **$2,275.44**
+- Property tax (1.2% a year): $400.00
+- Insurance ($1,500 a year): $125.00
+- PMI: $150.00
 
-## A common mistake
+That's about **$2,950 a month** in total — almost $700 more than the loan payment alone. PMI stops after about 9 years, once you've paid the loan down to 78% of the home's price.
 
-**Budgeting for P&I alone.** Taxes, insurance and PMI added about $675 a month in the example above. Lenders approve you on the full payment — so should your budget. And remember property taxes and insurance usually rise over time.
+## Watch out for
+
+**Budgeting for the loan payment only.** Taxes, insurance and PMI can add hundreds of dollars a month, and taxes and insurance usually go up over time. Lenders look at the full payment — so should you.
+
+<details>
+<summary>The math (optional)</summary>
+
+**Monthly payment = loan payment + tax ÷ 12 + insurance ÷ 12 + HOA + PMI**
+
+- The loan payment uses the same formula as the Loan calculator: `P × r ÷ (1 − (1 + r)^−n)`.
+- **PMI** = loan amount × PMI rate ÷ 12. It applies while you owe more than 80% of the home's value, and this calculator removes it once your balance reaches 78% — the point where U.S. lenders must cancel it.
+
+</details>

@@ -1,6 +1,7 @@
 "use client";
 
 import { z } from "zod";
+import { define } from "@/lib/glossary";
 import {
   COMPOUNDING_OPTIONS,
   FREQUENCY_OPTIONS,
@@ -279,7 +280,7 @@ export default function SavingsGoal() {
                 <MoneyField
                   name="contribution"
                   label={`Contribution each ${periodNoun(freq)}`}
-                  tooltip="The fixed amount you'll add every period."
+                  tooltip="How much you can save each time — each month, if you save monthly."
                 />
               </InputGroup>
             )}
@@ -288,19 +289,20 @@ export default function SavingsGoal() {
                 name="annualRate"
                 label="Annual interest rate"
                 slider={{ min: 0, max: 12, step: 0.1 }}
-                tooltip="The yearly rate your savings earn (e.g. a high-yield savings account's APR)."
+                tooltip="The yearly interest your savings account pays (its APY). Use 0 for a regular checking account."
+                hint="High-yield savings accounts pay about 0.5–5%, depending on the economy."
               />
               <SelectField
                 name="compounding"
                 label="Compounding"
                 options={toOptions(COMPOUNDING_OPTIONS)}
-                tooltip="How often interest is added to your balance."
+                tooltip={`${define("compoundingFrequency")} If you're not sure, choose Monthly.`}
               />
               <SelectField
                 name="contributionFrequency"
                 label="Contribution frequency"
                 options={toOptions(FREQUENCY_OPTIONS)}
-                tooltip="How often you add money."
+                tooltip="How often you add money — monthly, or every paycheck."
               />
               <ToggleField
                 name="timing"
@@ -309,7 +311,7 @@ export default function SavingsGoal() {
                   { value: "end", label: "End of period" },
                   { value: "begin", label: "Beginning" },
                 ]}
-                tooltip="Saving at the start of each period gives your money one extra period to grow."
+                tooltip={define("contributionTiming")}
               />
             </InputGroup>
           </div>

@@ -15,6 +15,17 @@ test.describe("hub", () => {
   });
 });
 
+test("beginner's guide links every calculator and explains rates", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("link", { name: /Start with the Beginner's Guide/ }).click();
+  await expect(page.getByRole("heading", { name: "Beginner's Guide", level: 1 })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Understanding interest rates" })).toBeVisible();
+  await expect(page.locator("#which-calculator a")).toHaveCount(11);
+  await page.getByRole("link", { name: /How long until I'm debt-free/ }).click();
+  await expect(page).toHaveURL(/debt-payoff/);
+  await expect(page.getByText("How to use this calculator")).toBeVisible();
+});
+
 test.describe("compound interest", () => {
   test("#1 $10,000 at 5% monthly for 10 years", async ({ page }) => {
     await open(page, "compound-interest");

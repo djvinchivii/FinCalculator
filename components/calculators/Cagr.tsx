@@ -137,7 +137,7 @@ function ValuesField() {
       label="Yearly values"
       hint="One value per year, starting with the initial value. Separate with commas or new lines."
       error={error}
-      tooltip="Your investment's value at the start and at the end of each year. We'll compare the bumpy path with a smooth CAGR line."
+      tooltip="What your investment was worth at the start, then at the end of each year. We'll compare the real bumpy path with a smooth line."
     >
       <textarea
         id="f-values"
@@ -186,7 +186,7 @@ export default function Cagr() {
                 name="years"
                 label="Years"
                 suffix="years"
-                tooltip="How long you held it. Fractions like 2.5 are fine."
+                tooltip="How many years you held the investment. Fractions like 2.5 are fine."
               />
             </InputGroup>
           ) : (

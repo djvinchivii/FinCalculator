@@ -1,6 +1,7 @@
 "use client";
 
 import { z } from "zod";
+import { define } from "@/lib/glossary";
 import {
   budgetSplit,
   emergencyFund,
@@ -107,7 +108,7 @@ export default function Budget() {
             <MoneyField
               name="income"
               label="Monthly take-home pay"
-              tooltip="Your pay after taxes and deductions — what actually lands in your bank account."
+              tooltip={define("takeHomePay")}
             />
             <div className="grid grid-cols-3 gap-2">
               <PercentField
@@ -123,7 +124,7 @@ export default function Budget() {
               <PercentField
                 name="savings"
                 label="Savings"
-                tooltip="Saving, investing and paying down debt beyond the minimums."
+                tooltip="Money for saving, investing, and paying off debt faster than the minimums."
               />
             </div>
           </InputGroup>
@@ -131,7 +132,7 @@ export default function Budget() {
             <MoneyField
               name="monthlyExpenses"
               label="Essential monthly expenses"
-              tooltip="What you'd need each month to cover the basics if your income stopped."
+              tooltip="The bare minimum you'd need each month if your income stopped: rent, food, utilities, insurance and minimum debt payments."
             />
             <NumberField
               name="months"
@@ -139,9 +140,13 @@ export default function Budget() {
               grouping={false}
               allowDecimal={false}
               slider={{ min: 3, max: 12 }}
-              tooltip="Most experts suggest 3–6 months; aim higher if your income is irregular."
+              tooltip={`${define("emergencyFund")} Aim for more if your income changes a lot.`}
             />
-            <MoneyField name="currentSaved" label="Already saved" />
+            <MoneyField
+              name="currentSaved"
+              label="Already saved"
+              tooltip="Money you've already set aside for emergencies. Use 0 if you're just starting."
+            />
             <MoneyField
               name="monthlySaving"
               label="Monthly saving toward it"

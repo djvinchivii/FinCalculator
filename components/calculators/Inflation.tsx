@@ -1,6 +1,7 @@
 "use client";
 
 import { z } from "zod";
+import { define } from "@/lib/glossary";
 import {
   futureCost,
   inflationSeries,
@@ -73,21 +74,28 @@ export default function Inflation() {
             <MoneyField
               name="amount"
               label="Amount"
-              tooltip="A price today (or a sum of money) to project forward."
+              tooltip="A price today — like $100 of groceries — or an amount of money you have."
             />
             <PercentField
               name="inflation"
               label="Annual inflation rate"
               slider={{ min: 0, max: 15, step: 0.1 }}
-              tooltip="How fast prices rise each year on average. The U.S. long-run average is roughly 3%."
+              tooltip={define("inflation")}
+              hint="Not sure? About 3% a year is the long-term U.S. average."
             />
-            <NumberField name="years" label="Years" suffix="years" slider={{ min: 1, max: 50 }} />
+            <NumberField
+              name="years"
+              label="Years"
+              suffix="years"
+              slider={{ min: 1, max: 50 }}
+              tooltip="How many years into the future you want to look."
+            />
           </InputGroup>
           <InputGroup title="Real return">
             <PercentField
               name="nominalReturn"
               label="Nominal investment return"
-              tooltip="The return you earn before accounting for inflation."
+              tooltip="Optional. How much your investments grow each year before inflation (for example, 7%). We'll show how much of that is real growth."
             />
           </InputGroup>
         </>

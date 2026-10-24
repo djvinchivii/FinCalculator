@@ -2,6 +2,7 @@
 
 import { useFieldArray } from "react-hook-form";
 import { z } from "zod";
+import { define } from "@/lib/glossary";
 import {
   addMonths,
   compareStrategies,
@@ -164,23 +165,21 @@ function DebtRows() {
                 placeholder={`Debt ${i + 1}`}
                 className="min-[420px]:col-span-2"
               />
-              <MoneyField name={`debts.${i}.balance`} label="Balance" />
+              <MoneyField
+                name={`debts.${i}.balance`}
+                label="Balance"
+                tooltip={i === 0 ? define("balance") : undefined}
+              />
               <PercentField
                 name={`debts.${i}.apr`}
                 label="APR"
-                tooltip={
-                  i === 0
-                    ? "Annual percentage rate. Monthly interest = balance × APR ÷ 12."
-                    : undefined
-                }
+                tooltip={i === 0 ? `${define("apr")} It's on your statement.` : undefined}
               />
               <MoneyField
                 name={`debts.${i}.minPayment`}
                 label="Minimum payment"
                 className="min-[420px]:col-span-2"
-                tooltip={
-                  i === 0 ? "The smallest payment the lender requires each month." : undefined
-                }
+                tooltip={i === 0 ? define("minimumPayment") : undefined}
               />
             </div>
           </li>
@@ -278,7 +277,7 @@ export default function DebtPayoff() {
             <MoneyField
               name="budget"
               label="Monthly budget for debt"
-              tooltip="The total you can put toward all debts each month. Anything above the minimums goes to your target debt."
+              tooltip="The total you can afford to pay toward all your debts each month, including the minimums. Anything extra goes to one debt at a time."
             />
             <ToggleField
               name="strategy"
@@ -288,7 +287,7 @@ export default function DebtPayoff() {
                 { value: "snowball", label: "Snowball" },
                 { value: "custom", label: "My order" },
               ]}
-              tooltip="Avalanche targets the highest APR first (least interest). Snowball targets the smallest balance first (quick wins). 'My order' follows the list above — use ↑ ↓ to reorder."
+              tooltip="Avalanche: pay off the highest interest rate first (saves the most money). Snowball: pay off the smallest balance first (quick wins). My order: follow the list above — use ↑ ↓ to change it."
             />
             <DateField
               name="startDate"
