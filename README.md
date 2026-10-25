@@ -38,6 +38,14 @@ The first time you run the e2e tests, install a browser: `npx playwright install
 
 `npm run dev` builds into `.next-dev` and production builds use `.next`, so you can run the tests or `npm run build` while the dev server is running. If the dev server ever shows a `Cannot find module './123.js'` error, stop it, delete `.next-dev`, and start it again.
 
+## Deployment
+
+The live site is **https://fincalculator.co**, hosted on GitHub Pages.
+
+- Every push to `main` runs [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml): lint, typecheck and unit tests, then `npm run build` and a deploy of the `out/` folder. A failing check blocks the deploy.
+- Browser tests (`npm run test:e2e`) run on pull requests via [`.github/workflows/e2e.yml`](.github/workflows/e2e.yml), or on demand from the Actions tab.
+- The custom domain is set by [`public/CNAME`](public/CNAME) and in the repo's Settings → Pages.
+
 ## How it's built
 
 - **Next.js (App Router) + TypeScript (strict)**, statically exported.
